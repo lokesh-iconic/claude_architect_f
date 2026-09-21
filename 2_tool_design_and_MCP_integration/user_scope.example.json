@@ -1,0 +1,22 @@
+{
+  "_comment": [
+    "Personal server, registered at USER scope so it follows you across every",
+    "project instead of being committed here. Do not copy this file into",
+    ".mcp.json - that would make a personal tool everyone's problem.",
+    "",
+    "Register it with:",
+    "  claude mcp add --scope user scratchpad -- uv run python personal_scratchpad.py",
+    "",
+    "Then confirm both scopes are live in one session with /mcp, which lists",
+    "the project-scoped issue-tracker and the user-scoped scratchpad together."
+  ],
+  "mcpServers": {
+    "scratchpad": {
+      "command": "uv",
+      "args": ["run", "python", "personal_scratchpad.py"],
+      "env": {
+        "SCRATCHPAD_DIR": "${HOME}/.claude-scratchpad"
+      }
+    }
+  }
+}

@@ -6,6 +6,7 @@ builds, how to run it, and how to verify it.
 | Module | Builds |
 |---|---|
 | [1_agent_architecture_and_orchestration/](1_agent_architecture_and_orchestration/) | A multi-agent research coordinator: decomposition, parallel delegation to specialist subagents, cited synthesis |
+| [2_tool_design_and_MCP_integration/](2_tool_design_and_MCP_integration/) | An issue-tracker MCP server: overlapping-tool disambiguation, structured errors, resources, project/user scopes |
 
 ## Setup
 

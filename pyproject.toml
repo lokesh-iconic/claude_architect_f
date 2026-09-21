@@ -9,6 +9,7 @@ authors = [
 requires-python = ">=3.14"
 dependencies = [
     "anthropic>=1.7.0",
+    "mcp>=2.2.0",
     "python-dotenv>=1.2.3",
 ]
 
@@ -26,4 +27,7 @@ dev = [
 
 [tool.pytest.ini_options]
 # Each problem statement keeps its tests beside its code.
-testpaths = ["1_agent_architecture_and_orchestration/tests"]
+testpaths = [
+    "1_agent_architecture_and_orchestration/tests",
+    "2_tool_design_and_MCP_integration/tests",
+]
