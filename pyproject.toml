@@ -1,0 +1,29 @@
+[project]
+name = "claude-architect-foundations"
+version = "0.1.0"
+description = "Solutions to the Claude architect foundations problem statements"
+readme = "README.md"
+authors = [
+    { name = "lokesh-iconic", email = "kjlokesh83@gmail.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "anthropic>=1.7.0",
+    "python-dotenv>=1.2.3",
+]
+
+[project.scripts]
+claude-architect-foundations = "claude_architect_foundations:main"
+
+[build-system]
+requires = ["uv_build>=0.12.17,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
+
+[tool.pytest.ini_options]
+# Each problem statement keeps its tests beside its code.
+testpaths = ["1_agent_architecture_and_orchestration/tests"]
