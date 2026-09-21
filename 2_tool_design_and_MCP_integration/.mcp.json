@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "issue-tracker": {
+      "command": "uv",
+      "args": ["run", "python", "server.py"],
+      "env": {
+        "TRACKER_API_TOKEN": "${TRACKER_API_TOKEN}",
+        "TRACKER_BASE_URL": "${TRACKER_BASE_URL:-https://tracker.internal.example}",
+        "TRACKER_SIMULATE": "${TRACKER_SIMULATE:-}",
+        "TRACKER_SIMULATE_TOOL": "${TRACKER_SIMULATE_TOOL:-}",
+        "PYTHONIOENCODING": "utf-8"
+      }
+    }
+  }
+}
