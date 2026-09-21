@@ -1,0 +1,31 @@
+# Secrets and local config
+.env
+.env.local
+
+# Exercise briefs - not part of the published work
+problem_statements/
+
+# Runtime output: every module writes its reports and traces here
+output/
+out/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+
+# Tooling caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Editors and OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db

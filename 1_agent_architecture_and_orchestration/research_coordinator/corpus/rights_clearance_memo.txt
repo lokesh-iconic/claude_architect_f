@@ -1,0 +1,26 @@
+Rights clearance memo
+
+Date: 2025-06-21
+Source: internal legal guidance, creative services division
+
+This memo sets out the clearance position for delivered work that involved
+generative tooling at any stage of production.
+
+Provenance must be recorded per asset, not per project. A project-level
+declaration is not sufficient because clearance questions arrive about
+specific frames, images or passages, and a project-level record cannot answer
+them. Teams should log the tool, the model version and the prompt lineage for
+each generated asset that reaches a delivery path.
+
+Training-data exposure remains the principal unresolved risk. Where a vendor
+cannot describe the provenance of its training corpus, delivered work built on
+that vendor's output should be treated as carrying unquantified risk, and that
+assessment should be surfaced to the client rather than absorbed silently.
+
+Licensed and rights-cleared corpora reduce but do not eliminate this exposure,
+because indemnity terms vary widely and several are capped well below the
+value of a typical delivery.
+
+Human authorship should be documented wherever a copyright claim is intended.
+The safest posture is a contemporaneous record of the human contribution, kept
+alongside the asset provenance log.
