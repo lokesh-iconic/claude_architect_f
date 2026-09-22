@@ -1,0 +1,18 @@
+Personal, user-scope Claude Code preferences -- not part of this repo.
+
+Copy this file to `~/.claude/CLAUDE.md` (created automatically the first
+time you run `claude` if it doesn't exist) to apply these to every project
+you work in, not just this one. Project scope (this repo's own `CLAUDE.md`)
+and directory scope (a `CLAUDE.md` in a subfolder) both layer on top of this,
+they don't replace it.
+
+---
+
+# Personal preferences
+
+- Prefer terse commit messages: a single summary line unless the change
+  genuinely needs a body.
+- When unsure between two equally reasonable approaches, ask rather than
+  picking one silently.
+- I mostly work from a Windows machine with PowerShell as the primary shell;
+  prefer PowerShell-safe command syntax when both are equivalent.
