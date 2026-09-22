@@ -35,7 +35,7 @@ uv run python 3_claude_code_configuration_and_workflows/main.py all
 ```
 
 That runs all four checks and writes reports into this module's
-[`output/`](.), which is git-ignored:
+[`output/`](.):
 
 ```
   wrote output/hierarchy-20260922-154253.md
@@ -233,7 +233,7 @@ be mistaken for a real review.
 | [`review/report.py`](review/report.py) | Markdown report rendering |
 | [`templates/user_claude_md.example`](templates/user_claude_md.example) | User-scope CLAUDE.md template |
 | [`tests/`](tests/) | 53 tests, one per claim this README makes |
-| `output/` | Reports, written at runtime; git-ignored |
+| `output/` | Reports, written at runtime (e.g. `output/review-20260922-154253.md`) |
 
 ---
 
