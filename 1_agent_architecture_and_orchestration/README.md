@@ -30,8 +30,7 @@ uv sync
 uv run python main.py "the impact of AI on creative industries"
 ```
 
-Every run writes a Markdown report and a JSON trace into [`output/`](.), which
-is git-ignored:
+Every run writes a Markdown report and a JSON trace into [`output/`](.):
 
 ```
 Report : output/the-impact-of-ai-on-creative-industries-20260921-165650.md
@@ -194,7 +193,7 @@ coordinator (the synthesis and gap-review work) than on the subagents.
 | [`report.py`](research_coordinator/report.py) | Markdown report, generated bibliography, JSON trace |
 | [`corpus/`](research_coordinator/corpus/) | Sample documents for the document analyst |
 | [`tests/`](tests/) | 18 tests, one per claim this README makes |
-| `output/` | Reports and traces, written at runtime; git-ignored |
+| `output/` | Reports and traces, written at runtime (e.g. `output/the-impact-of-ai-on-creative-industries-20260921-165650.md`) |
 
 ---
 

@@ -29,8 +29,7 @@ uv sync
 uv run python main.py all
 ```
 
-That runs all four harnesses and writes their reports into [`output/`](.),
-which is git-ignored:
+That runs all four harnesses and writes their reports into [`output/`](.):
 
 ```
   wrote output/selection-20260921-171859.md
@@ -230,7 +229,7 @@ Four steps reach the defect having read two files out of eleven. Starting from
 | [`data.py`](issue_tracker/data.py) / [`store.py`](issue_tracker/store.py) | Sample dataset and queries |
 | [`sample_service/`](sample_service/) | The codebase the issues point at |
 | [`tests/`](tests/) | 27 tests, most talking to a real server process |
-| `output/` | Reports, written at runtime; git-ignored |
+| `output/` | Reports, written at runtime (e.g. `output/selection-20260921-171859.md`) |
 
 ---
 

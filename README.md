@@ -27,7 +27,7 @@ uv run python main.py "your topic"
 
 Without a valid `ANTHROPIC_API_KEY`, modules fall back to an offline mock mode
 so they still run end to end. Each module writes its results to its own
-`output/` folder, which is git-ignored.
+`output/` folder, e.g. `output/the-impact-of-ai-on-creative-industries-20260921-165650.md`.
 
 ## Claude Code configuration
 
