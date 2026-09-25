@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "support-resolution": {
+      "command": "uv",
+      "args": ["run", "python", "server.py"],
+      "env": {
+        "SUPPORT_TOOL_TIMEOUT": "${SUPPORT_TOOL_TIMEOUT:-3}",
+        "SUPPORT_SIMULATE_TIMEOUT": "${SUPPORT_SIMULATE_TIMEOUT:-}",
+        "SUPPORT_SIMULATE_TIMES": "${SUPPORT_SIMULATE_TIMES:-1}"
+      }
+    }
+  }
+}

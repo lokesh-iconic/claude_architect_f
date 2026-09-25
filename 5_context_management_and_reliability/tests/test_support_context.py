@@ -6,12 +6,12 @@ import threading
 
 import pytest
 
-from support_agent import trimming
-from support_agent.backend import MockBackend
-from support_agent.facts import OPEN_TAG
-from support_agent.handlers import Faults, Progress, UpstreamState, get_customer, lookup_order
-from support_agent.memory import SUMMARY_OPEN, MockSummarizer, paraphrase
-from support_agent.scenarios import (
+from support_agent.tools import trimming
+from support_agent.backends.backend import MockBackend
+from support_agent.conversation.facts import OPEN_TAG
+from support_agent.tools.handlers import Faults, Progress, UpstreamState, get_customer, lookup_order
+from support_agent.conversation.memory import SUMMARY_OPEN, MockSummarizer, paraphrase
+from support_agent.evaluation.scenarios import (
     LONG_CONVERSATION, PROBE_AMOUNT_TURN, PROBE_EMAIL_TURN, PROBE_REFUND_TURN, converse,
 )
 
@@ -130,7 +130,7 @@ def test_trimming_drops_contact_and_device_data_from_customer_lookups():
 
 def test_summary_stays_bounded():
     summarizer = MockSummarizer()
-    from support_agent.memory import Exchange
+    from support_agent.conversation.memory import Exchange
 
     summary = ""
     for n in range(40):

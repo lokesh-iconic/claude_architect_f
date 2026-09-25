@@ -48,6 +48,57 @@ every report opens with a banner saying so.
 
 ---
 
+## How to run: mock and live
+
+Every command below runs from this directory. One-time setup, from the repo root:
+
+```bash
+uv sync
+cp .env.example .env      # only needed for live mode; .env is git-ignored
+```
+
+### Mock mode (offline, no API key)
+
+```bash
+uv run python main.py all --mode mock        # corpus extraction, then the 120-document batch run
+uv run python main.py extract --mode mock    # just the 12-document corpus
+```
+
+The mock returns the hand-labelled ground truth, with first-attempt defects
+scripted per document (`mock_fault` in `corpus/ground_truth.json`). Validation,
+retry, routing and scoring are the real code. The batch path uses an in-memory
+client with deterministic failures.
+
+### Live mode (real Claude API)
+
+1. Add your key to the repo-root `.env`: `ANTHROPIC_API_KEY=<your key>`. Never put it in a committed file.
+2. Run:
+
+```bash
+uv run python main.py extract --mode live                    # synchronous, 12 documents
+uv run python main.py batch --mode live --batch-size 20      # Message Batches API; start small
+uv run python main.py all --mode live                        # both
+```
+
+Extraction calls `claude-opus-5` (`IE_MODEL`) with a strict tool. The batch run
+is asynchronous. It polls every `IE_BATCH_POLL_INTERVAL` seconds, up to
+`IE_BATCH_POLL_TIMEOUT` (30 minutes by default), and costs half the synchronous
+price, so keep `--batch-size` small until you've seen one complete.
+
+### Auto mode (the default)
+
+Leave `--mode` off and the module picks for you: live if `ANTHROPIC_API_KEY` is
+set and passes a zero-token `GET /v1/models/{id}` check, otherwise mock. The
+first line of output always says which mode ran and why.
+
+### Tests
+
+```bash
+uv run pytest 4_prompt_engineering_and_structured_output/tests      # from the repo root; always offline, no key needed
+```
+
+---
+
 ## How it works
 
 ```
@@ -63,7 +114,7 @@ every report opens with a banner saying so.
 
 ### The schema is the contract
 
-[`schema.py`](invoice_extractor/schema.py) defines one tool, `record_extraction`,
+[`schema.py`](invoice_extractor/extraction/schema.py) defines one tool, `record_extraction`,
 with `strict: true` and `tool_choice: {"type": "tool"}`. The API then guarantees
 the output matches the schema, whatever the prompt says. Every property is
 `required`, and any field a document might not have is typed
@@ -81,7 +132,7 @@ categories.
 
 ### Validation sorts every issue into retryable or not
 
-[`validation.py`](invoice_extractor/validation.py) checks four things.
+[`validation.py`](invoice_extractor/extraction/validation.py) checks four things.
 
 | Kind | Examples | Retryable? |
 |---|---|---|
@@ -95,7 +146,7 @@ made-up quote to support it, and a made-up quote isn't in the document.
 
 ### The retry loop
 
-[`pipeline.py`](invoice_extractor/pipeline.py). If an attempt has retryable
+[`pipeline.py`](invoice_extractor/extraction/pipeline.py). If an attempt has retryable
 issues, the next request contains the document, then the failed extraction as
 the model's own `tool_use` turn, then a `tool_result` with `is_error: true`
 listing each specific error with its code, field, figures and remediation. For
@@ -117,7 +168,7 @@ Two design decisions matter here.
 
 ### Few-shot examples
 
-[`few_shot.py`](invoice_extractor/few_shot.py) holds three examples, rendered
+[`few_shot.py`](invoice_extractor/extraction/few_shot.py) holds three examples, rendered
 into the system prompt. They were picked for the cases the rules handle worst:
 
 1. A credit memo: negative signs, plus a PO and due date that are absent and
@@ -134,7 +185,7 @@ something the validator would reject.
 
 ### Batch path
 
-[`batch.py`](invoice_extractor/batch.py) sends each document as one Message
+[`batch.py`](invoice_extractor/backends/batch.py) sends each document as one Message
 Batches request, with `custom_id` set to the doc id. The request body is the
 same `build_params()` dict the synchronous path sends. Results come back in
 any order and are matched to documents by `custom_id` only. After each round,
@@ -204,7 +255,7 @@ All commands run from this directory.
 
 ## Live vs mock mode
 
-Mode is resolved once at startup by [`settings.py`](invoice_extractor/settings.py):
+Mode is resolved once at startup by [`settings.py`](invoice_extractor/config/settings.py):
 
 1. `--mode mock` always gives mock.
 2. With no `ANTHROPIC_API_KEY`, the mode is mock.
@@ -241,27 +292,43 @@ Configuration lives in the project `.env`: `IE_MODEL`, `IE_EFFORT`,
 
 ---
 
-## Layout
+## Folder structure
 
-| File | Role |
+```text
+4_prompt_engineering_and_structured_output/
+├── main.py                      CLI; writes every run into output/
+├── invoice_extractor/
+│   ├── config/
+│   │   └── settings.py          .env loading, live/mock resolution, key validation
+│   ├── extraction/
+│   │   ├── schema.py            The strict extraction tool, enums, tool_choice per model
+│   │   ├── models.py            Dataclasses for extractions, attempts, results
+│   │   ├── prompts.py           System prompt, few-shot rendering, retry feedback turn
+│   │   ├── few_shot.py          The three few-shot examples and why each was chosen
+│   │   ├── validation.py        Format, grounding, arithmetic and required-field checks
+│   │   ├── pipeline.py          The retry loop (step), stop rules, confidence routing
+│   │   └── errors.py            ExtractionError and ValidationIssue
+│   ├── backends/
+│   │   ├── backend.py           LiveBackend (Messages API) and MockBackend
+│   │   └── batch.py             Batches client (live and mock), failed-only resubmission
+│   ├── evaluation/
+│   │   ├── corpus.py            Corpus + ground truth loading, synthetic batch generator
+│   │   └── evaluate.py          Field-level scoring; fabrication counted separately
+│   ├── reporting/
+│   │   └── report.py            Markdown reports, JSON traces, review-queue JSONL
+│   └── corpus/                  12 sample documents and ground_truth.json
+├── tests/                       38 tests, none needing a key or the network
+└── output/                      Reports, traces and review queues, written at runtime (git-ignored)
+```
+
+| Folder | Responsibility |
 |---|---|
-| [`main.py`](main.py) | CLI; writes every run into `output/` |
-| [`settings.py`](invoice_extractor/settings.py) | `.env` loading, live/mock resolution, key validation |
-| [`schema.py`](invoice_extractor/schema.py) | The strict extraction tool, enums, `tool_choice` per model |
-| [`prompts.py`](invoice_extractor/prompts.py) | System prompt, few-shot rendering, retry feedback turn |
-| [`few_shot.py`](invoice_extractor/few_shot.py) | The three few-shot examples and why each was chosen |
-| [`validation.py`](invoice_extractor/validation.py) | Format, grounding, arithmetic, and required-field checks |
-| [`pipeline.py`](invoice_extractor/pipeline.py) | The retry loop (`step`), stop rules, confidence routing |
-| [`batch.py`](invoice_extractor/batch.py) | Batches client (live and mock), rounds, failed-only resubmission |
-| [`backend.py`](invoice_extractor/backend.py) | `LiveBackend` (Messages API) and `MockBackend` |
-| [`models.py`](invoice_extractor/models.py) | Dataclasses for extractions, attempts, results |
-| [`errors.py`](invoice_extractor/errors.py) | `ExtractionError` and `ValidationIssue` (category, `isRetryable`, remediation) |
-| [`corpus.py`](invoice_extractor/corpus.py) | Corpus + ground truth loading, synthetic batch generator |
-| [`evaluate.py`](invoice_extractor/evaluate.py) | Field-level scoring; fabrication counted separately |
-| [`report.py`](invoice_extractor/report.py) | Markdown reports, JSON traces, review-queue JSONL |
-| [`corpus/`](invoice_extractor/corpus/) | 12 sample documents and `ground_truth.json` |
-| [`tests/`](tests/) | 38 tests, none needing a key or the network |
-| `output/` | Reports, traces, and review queues, written at runtime |
+| [`invoice_extractor/config/`](invoice_extractor/config/) | Settings and live/mock mode resolution |
+| [`invoice_extractor/extraction/`](invoice_extractor/extraction/) | The contract and the loop: schema, prompts, few-shots, validation, retry |
+| [`invoice_extractor/backends/`](invoice_extractor/backends/) | Live and mock model backends, and the Batches client |
+| [`invoice_extractor/evaluation/`](invoice_extractor/evaluation/) | Corpus loading and scoring against ground truth |
+| [`invoice_extractor/reporting/`](invoice_extractor/reporting/) | Reports, traces and the review queue |
+| [`invoice_extractor/corpus/`](invoice_extractor/corpus/) | Sample documents and ground truth |
 
 ---
 

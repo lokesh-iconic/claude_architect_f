@@ -11,7 +11,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from support_agent.mcp_server import main  # noqa: E402
+from support_agent.tools.mcp_server import main  # noqa: E402
 
 if __name__ == "__main__":
     main()

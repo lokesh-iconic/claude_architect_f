@@ -20,11 +20,11 @@ OUTPUT_DIR = MODULE_DIR / "output"
 
 sys.path.insert(0, str(MODULE_DIR))
 
-from support_agent import report  # noqa: E402
-from support_agent.backend import make_backend  # noqa: E402
-from support_agent.errors import SupportToolError  # noqa: E402
-from support_agent.scenarios import SUITES, SuiteResult, agent_factory, run_enforcement  # noqa: E402
-from support_agent.settings import Settings, load_settings  # noqa: E402
+from support_agent.reporting import report  # noqa: E402
+from support_agent.backends.backend import make_backend  # noqa: E402
+from support_agent.tools.errors import SupportToolError  # noqa: E402
+from support_agent.evaluation.scenarios import SUITES, SuiteResult, agent_factory, run_enforcement  # noqa: E402
+from support_agent.config.settings import Settings, load_settings  # noqa: E402
 
 
 class Writer:
@@ -46,7 +46,7 @@ class Writer:
 
 def run_suite(name: str, args: argparse.Namespace, settings: Settings) -> SuiteResult:
     if name == "mcp":
-        from support_agent.probe_client import run_mcp
+        from support_agent.evaluation.probe_client import run_mcp
 
         return asyncio.run(run_mcp())
     build = agent_factory(settings, lambda: make_backend(settings))

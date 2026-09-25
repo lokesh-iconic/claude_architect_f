@@ -1,7 +1,7 @@
 import pytest
 
-from review import settings as settings_mod
-from review.settings import load_settings
+from review.config import settings as settings_mod
+from review.config.settings import load_settings
 
 
 def test_mode_mock_is_always_honoured(monkeypatch):

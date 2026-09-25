@@ -12,6 +12,6 @@ On top of the root `CLAUDE.md`, these apply only while working inside
 - The `review/` package must stay offline-testable exactly like modules 1/2:
   a `MockRunner`/`LiveRunner` pair for the `claude` CLI call, and a
   transport-injected `GithubReviewClient` so no test needs `gh` or network.
-- Fingerprinting (`review/findings.py`) intentionally excludes line numbers.
+- Fingerprinting (`review/pipeline/findings.py`) intentionally excludes line numbers.
   Don't "fix" a dedup test failure by adding line back in — that's the
   regression this module exists to prevent.

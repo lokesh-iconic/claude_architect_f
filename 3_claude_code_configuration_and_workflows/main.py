@@ -18,10 +18,12 @@ DEFAULT_STATE_FILE = OUTPUT_DIR / ".review-state.json"
 
 sys.path.insert(0, str(MODULE_DIR))
 
-from review import ci_check, dedupe, diffing, hierarchy_check, report, rules_check, state  # noqa: E402
-from review.claude_cli import LiveRunner, MockRunner, ReviewRunError  # noqa: E402
-from review.github_client import GithubReviewClient  # noqa: E402
-from review.settings import load_settings  # noqa: E402
+from review.checks import ci_check, hierarchy_check, rules_check  # noqa: E402
+from review.pipeline import dedupe, diffing, state  # noqa: E402
+from review.reporting import report  # noqa: E402
+from review.clients.claude_cli import LiveRunner, MockRunner, ReviewRunError  # noqa: E402
+from review.clients.github_client import GithubReviewClient  # noqa: E402
+from review.config.settings import load_settings  # noqa: E402
 
 
 def write(name: str, content: str, quiet: bool) -> Path:

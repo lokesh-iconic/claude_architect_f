@@ -1,6 +1,6 @@
 import subprocess
 
-from review.claude_cli import (
+from review.clients.claude_cli import (
     SYNTHETIC_TAG,
     LiveRunner,
     MockRunner,

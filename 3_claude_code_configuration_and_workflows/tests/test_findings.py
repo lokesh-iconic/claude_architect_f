@@ -1,6 +1,6 @@
 import pytest
 
-from review.findings import Finding, FindingsParseError, parse_findings
+from review.pipeline.findings import Finding, FindingsParseError, parse_findings
 
 
 def test_fingerprint_stable_across_line_shift():

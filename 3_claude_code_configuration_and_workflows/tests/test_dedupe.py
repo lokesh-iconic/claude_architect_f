@@ -1,9 +1,9 @@
 """Self-check #4: a second run must not re-post what a prior run already
 flagged, even when a finding's line number has since shifted."""
 
-from review.claude_cli import MockRunner
-from review.dedupe import dedupe, extract_fingerprints
-from review.findings import Finding
+from review.clients.claude_cli import MockRunner
+from review.pipeline.dedupe import dedupe, extract_fingerprints
+from review.pipeline.findings import Finding
 
 
 def test_dedupe_skips_known_fingerprint():

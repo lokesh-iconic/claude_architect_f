@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from review.state import load_state, save_state
+from review.pipeline.state import load_state, save_state
 
 
 def test_missing_state_file_is_empty(tmp_path: Path):

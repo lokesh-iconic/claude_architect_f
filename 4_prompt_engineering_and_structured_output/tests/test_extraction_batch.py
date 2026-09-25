@@ -4,17 +4,17 @@ from __future__ import annotations
 
 import pytest
 
-from invoice_extractor.backend import MockBackend
-from invoice_extractor.batch import (
+from invoice_extractor.backends.backend import MockBackend
+from invoice_extractor.backends.batch import (
     CUSTOM_ID_RE,
     BatchItemResult,
     MockBatchClient,
     run_batch,
     wait_for,
 )
-from invoice_extractor.corpus import synthesize
-from invoice_extractor.errors import ExtractionError
-from invoice_extractor.pipeline import build_params
+from invoice_extractor.evaluation.corpus import synthesize
+from invoice_extractor.extraction.errors import ExtractionError
+from invoice_extractor.extraction.pipeline import build_params
 
 
 @pytest.fixture(scope="module")

@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from review.diffing import DiffError, changed_files, get_diff
+from review.pipeline.diffing import DiffError, changed_files, get_diff
 
 
 def _git(args: list[str], cwd: Path) -> None:

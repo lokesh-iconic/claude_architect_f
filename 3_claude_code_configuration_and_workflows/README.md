@@ -53,6 +53,67 @@ To see the config live in Claude Code, start a session at the repo root and:
 
 ---
 
+## How to run: mock and live
+
+Every command below runs from the **repo root**. One-time setup, from the repo root:
+
+```bash
+uv sync
+cp .env.example .env      # only needed for live mode; .env is git-ignored
+```
+
+### Mock mode (offline, no API key)
+
+```bash
+uv run python 3_claude_code_configuration_and_workflows/main.py all --mode mock
+uv run python 3_claude_code_configuration_and_workflows/main.py review --mode mock   # run again: same findings, now skipped
+```
+
+Checks 1–3 (`hierarchy-check`, `rules-check`, `ci-check`) are static and never
+call a model in either mode. `review` in mock mode uses `MockRunner`, which
+produces `[SYNTHETIC]` findings from `TODO`/`FIXME` lines in the diff, and a
+local dedup state file (`output/.review-state.json`).
+
+### Live mode (real `claude` CLI)
+
+Live review shells out to Claude Code in print mode (`claude -p`), not to the
+Python SDK:
+
+1. Install the CLI: `npm install -g @anthropic-ai/claude-code`, and make sure
+   `claude` is on your PATH (or set `CLAUDE_CODE_BIN`).
+2. Export a credential in your shell: `ANTHROPIC_API_KEY` or
+   `CLAUDE_CODE_OAUTH_TOKEN`. This module reads the environment directly; it
+   doesn't load `.env`.
+3. Run:
+
+```bash
+# Review your branch locally; dedup against output/.review-state.json, nothing posted
+uv run python 3_claude_code_configuration_and_workflows/main.py review --mode live --base origin/master
+
+# Review a PR: dedup against its existing comments and post new ones (needs an authenticated `gh`)
+uv run python 3_claude_code_configuration_and_workflows/main.py review --mode live --base origin/master --repo owner/name --pr 123
+
+# Compute findings without saving state or posting
+uv run python 3_claude_code_configuration_and_workflows/main.py review --mode live --dry-run
+```
+
+In CI, [`claude-review.yml`](../.github/workflows/claude-review.yml) runs the
+same command with `--mode auto`, using the `ANTHROPIC_API_KEY` repository
+secret.
+
+### Auto mode (the default)
+
+Leave `--mode` off: live if the `claude` binary is on PATH **and** a credential
+is set, otherwise mock, with the reason printed.
+
+### Tests
+
+```bash
+uv run pytest 3_claude_code_configuration_and_workflows/tests      # always offline
+```
+
+---
+
 ## What's configured
 
 | Artifact | Where | Scope |
@@ -78,9 +139,9 @@ otherwise":
 |---|---|---|
 | `2_tool_design_and_MCP_integration/tests/test_mcp_server.py` | Y | . |
 | `1_agent_architecture_and_orchestration/tests/test_orchestration.py` | Y | . |
-| `2_tool_design_and_MCP_integration/issue_tracker/mcp_server.py` | . | Y |
-| `2_tool_design_and_MCP_integration/issue_tracker/handlers.py` | . | Y |
-| `1_agent_architecture_and_orchestration/research_coordinator/agents.py` | . | . |
+| `2_tool_design_and_MCP_integration/issue_tracker/tools/mcp_server.py` | . | Y |
+| `2_tool_design_and_MCP_integration/issue_tracker/tools/handlers.py` | . | Y |
+| `1_agent_architecture_and_orchestration/research_coordinator/orchestration/agents.py` | . | . |
 | `README.md` | . | . |
 
 ### The `scaffold-module` Skill and `context: fork`
@@ -97,18 +158,18 @@ list comes back to the main conversation.
 `pull_request` (opened/synchronize/reopened), with `timeout-minutes: 15` and
 no interactive step — `claude -p` is Claude Code's non-interactive print
 mode, so there is no prompt to hang on in the first place. It shells out to
-[`review/claude_cli.py`](review/claude_cli.py)'s `LiveRunner`, which invokes:
+[`review/clients/claude_cli.py`](review/clients/claude_cli.py)'s `LiveRunner`, which invokes:
 
 ```
 claude -p "<prompt + diff>" --output-format json --model <model>
 ```
 
 and parses the JSON findings back out
-([`review/findings.py`](review/findings.py)). Each finding is fingerprinted
+([`review/pipeline/findings.py`](review/pipeline/findings.py)). Each finding is fingerprinted
 from its **file path, category, and normalized message — not its line
-number** ([`review/findings.py`](review/findings.py)`:Finding.fingerprint`),
+number** ([`review/pipeline/findings.py`](review/pipeline/findings.py)`:Finding.fingerprint`),
 so a later commit that shifts line numbers doesn't make an unresolved
-finding look new. Before posting, [`review/dedupe.py`](review/dedupe.py)
+finding look new. Before posting, [`review/pipeline/dedupe.py`](review/pipeline/dedupe.py)
 drops any finding whose fingerprint is already present in a hidden HTML
 marker (`<!-- claude-review:<fp> -->`) on an existing PR review comment,
 fetched via `gh api repos/{repo}/pulls/{pr}/comments`. Only what's left gets
@@ -190,7 +251,7 @@ Full option list: `uv run python 3_claude_code_configuration_and_workflows/main.
 
 ## Live vs mock mode
 
-Resolved once at startup by [`review/settings.py`](review/settings.py), same
+Resolved once at startup by [`review/config/settings.py`](review/config/settings.py), same
 shape as modules 1/2 but checking for the `claude` **CLI binary** plus
 `ANTHROPIC_API_KEY`/`CLAUDE_CODE_OAUTH_TOKEN`, not the `anthropic` Python
 SDK:
@@ -208,32 +269,55 @@ be mistaken for a real review.
 
 ---
 
-## Layout
+## Folder structure
+
+```text
+3_claude_code_configuration_and_workflows/
+├── main.py                      CLI for the four checks; writes into output/
+├── CLAUDE.md                    Directory-scope additions for this module
+├── review/
+│   ├── config/
+│   │   └── settings.py          Live/mock resolution for the claude CLI
+│   ├── checks/
+│   │   ├── hierarchy_check.py   Self-check 1: CLAUDE.md files exist and are git-tracked
+│   │   ├── rules_check.py       Self-check 2: rule frontmatter + glob matrix
+│   │   ├── ci_check.py          Self-check 3: static workflow inspection
+│   │   └── globmatch.py         Hand-rolled **-aware glob matcher
+│   ├── pipeline/
+│   │   ├── diffing.py           Git diff access
+│   │   ├── findings.py          Finding, JSON parsing, fingerprinting
+│   │   ├── dedupe.py            Cross-run dedup (self-check 4)
+│   │   └── state.py             Local stand-in for a prior run's posted findings
+│   ├── clients/
+│   │   ├── claude_cli.py        LiveRunner (real `claude -p`) and MockRunner
+│   │   └── github_client.py     `gh api` wrapper, injectable transport
+│   └── reporting/
+│       └── report.py            Markdown report rendering
+├── templates/
+│   └── user_claude_md.example   User-scope CLAUDE.md template
+├── tests/                       53 tests, one per claim this README makes
+└── output/                      Reports and the local review state, written at runtime (git-ignored)
+```
+
+| Folder | Responsibility |
+|---|---|
+| [`review/config/`](review/config/) | Settings and live/mock resolution for the `claude` CLI |
+| [`review/checks/`](review/checks/) | Offline checks of the Claude Code config and the CI workflow |
+| [`review/pipeline/`](review/pipeline/) | Diff, findings, fingerprints, cross-run dedup state |
+| [`review/clients/`](review/clients/) | The `claude -p` runner and the GitHub client |
+| [`review/reporting/`](review/reporting/) | Report rendering |
+| [`templates/`](templates/) | The user-scope CLAUDE.md template |
+
+The Claude Code configuration this module verifies lives at the repo root,
+because that's the only place Claude Code and GitHub Actions look for it:
 
 | File | Role |
 |---|---|
 | [`../CLAUDE.md`](../CLAUDE.md) | Project-scope team standards |
-| [`CLAUDE.md`](CLAUDE.md) | Directory-scope additions for this module |
 | [`../.claude/rules/`](../.claude/rules/) | Path-scoped rules |
 | [`../.claude/commands/verify-module.md`](../.claude/commands/verify-module.md) | The `/verify-module` slash command |
 | [`../.claude/skills/scaffold-module/SKILL.md`](../.claude/skills/scaffold-module/SKILL.md) | The forked scaffolding Skill |
 | [`../.github/workflows/claude-review.yml`](../.github/workflows/claude-review.yml) | The CI workflow |
-| [`main.py`](main.py) | CLI for the four checks; writes into `output/` |
-| [`review/settings.py`](review/settings.py) | Live/mock resolution for the `claude` CLI |
-| [`review/diffing.py`](review/diffing.py) | Git diff access |
-| [`review/claude_cli.py`](review/claude_cli.py) | `LiveRunner` (real `claude -p`) and `MockRunner` |
-| [`review/findings.py`](review/findings.py) | `Finding`, JSON parsing, fingerprinting |
-| [`review/dedupe.py`](review/dedupe.py) | Cross-run dedup — the core of self-check #4 |
-| [`review/github_client.py`](review/github_client.py) | `gh api` wrapper, injectable transport |
-| [`review/state.py`](review/state.py) | Local stand-in for "prior run's posted findings" |
-| [`review/rules_check.py`](review/rules_check.py) | Self-check #2: frontmatter + glob matrix |
-| [`review/hierarchy_check.py`](review/hierarchy_check.py) | Self-check #1: existence + git-tracked |
-| [`review/ci_check.py`](review/ci_check.py) | Self-check #3: static workflow inspection |
-| [`review/globmatch.py`](review/globmatch.py) | Hand-rolled `**`-aware glob matcher |
-| [`review/report.py`](review/report.py) | Markdown report rendering |
-| [`templates/user_claude_md.example`](templates/user_claude_md.example) | User-scope CLAUDE.md template |
-| [`tests/`](tests/) | 53 tests, one per claim this README makes |
-| `output/` | Reports, written at runtime (e.g. `output/review-20260922-154253.md`) |
 
 ---
 

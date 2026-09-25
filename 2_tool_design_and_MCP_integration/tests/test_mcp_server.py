@@ -13,12 +13,13 @@ import json
 import pytest
 from mcp import Client
 
-from issue_tracker import config_check, resource_eval
-from issue_tracker import selection as sel
-from issue_tracker.errors import TrackerError, parse_error_payload
-from issue_tracker.handlers import call
-from issue_tracker.probe_client import server_params
-from issue_tracker.toolspecs import DESCRIPTIONS_V1, DESCRIPTIONS_V2, SCHEMAS, TOOL_NAMES
+from issue_tracker.config import config_check
+from issue_tracker.evaluation import resource_eval
+from issue_tracker.evaluation import selection as sel
+from issue_tracker.core.errors import TrackerError, parse_error_payload
+from issue_tracker.tools.handlers import call
+from issue_tracker.evaluation.probe_client import server_params
+from issue_tracker.tools.toolspecs import DESCRIPTIONS_V1, DESCRIPTIONS_V2, SCHEMAS, TOOL_NAMES
 
 
 def run(coro):
@@ -93,7 +94,7 @@ def test_handler_errors_are_categorized(tool, args, category, retryable):
 
 
 def test_transient_errors_are_the_only_retryable_ones():
-    from issue_tracker.errors import transient_error, validation_error, permission_error
+    from issue_tracker.core.errors import transient_error, validation_error, permission_error
 
     assert transient_error("x", attempted="t").retryable is True
     assert validation_error("x", attempted="t").retryable is False
@@ -283,7 +284,7 @@ def test_personal_scratchpad_server_starts_and_round_trips(tmp_path):
 
     from mcp import StdioServerParameters
 
-    from issue_tracker.settings import MODULE_DIR
+    from issue_tracker.config.settings import MODULE_DIR
 
     script = MODULE_DIR / "personal_scratchpad.py"
     assert script.is_file(), "user_scope.example.json points at a missing script"
@@ -311,7 +312,7 @@ def test_personal_scratchpad_server_starts_and_round_trips(tmp_path):
 
 
 def test_user_scope_example_points_at_a_script_that_exists():
-    from issue_tracker.settings import MODULE_DIR
+    from issue_tracker.config.settings import MODULE_DIR
 
     servers = config_check.user_scope_servers()
     assert servers

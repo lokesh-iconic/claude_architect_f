@@ -6,11 +6,11 @@ import asyncio
 
 from mcp import Client
 
-from support_agent.adversarial import RecklessRefundBackend
-from support_agent.enforcement import fuzz
-from support_agent.probe_client import REFUND, VERIFY, _call, server_params
-from support_agent.scenarios import converse
-from support_agent.session import ToolSession
+from support_agent.backends.adversarial import RecklessRefundBackend
+from support_agent.evaluation.enforcement import fuzz
+from support_agent.evaluation.probe_client import REFUND, VERIFY, _call, server_params
+from support_agent.evaluation.scenarios import converse
+from support_agent.tools.session import ToolSession
 
 REFUND_ARGS = {"customer_id": "C-1001", "order_id": "ORD-5521", "amount": 249.99, "reason": "test"}
 

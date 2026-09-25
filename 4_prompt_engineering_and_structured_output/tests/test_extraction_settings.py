@@ -8,8 +8,8 @@ from pathlib import Path
 
 import pytest
 
-from invoice_extractor import settings as settings_mod
-from invoice_extractor.settings import load_settings
+from invoice_extractor.config import settings as settings_mod
+from invoice_extractor.config.settings import load_settings
 
 # Every module has a main.py; load this one by path so sys.modules["main"] can't collide.
 _spec = importlib.util.spec_from_file_location(

@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from support_agent.mock_agent import split_concerns
-from support_agent.scenarios import DANA_VERIFY, IDENTITY_AND_TWO_CONCERNS, THREE_CONCERNS, converse
+from support_agent.backends.mock_agent import split_concerns
+from support_agent.evaluation.scenarios import DANA_VERIFY, IDENTITY_AND_TWO_CONCERNS, THREE_CONCERNS, converse
 
 
 def test_three_concerns_each_get_an_action_and_an_answer(build):

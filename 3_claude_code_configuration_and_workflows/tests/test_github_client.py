@@ -1,7 +1,7 @@
 import json
 
-from review.findings import Finding
-from review.github_client import GithubReviewClient
+from review.pipeline.findings import Finding
+from review.clients.github_client import GithubReviewClient
 
 
 class FakeTransport:
