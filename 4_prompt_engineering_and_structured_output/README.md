@@ -35,12 +35,12 @@ That runs the synchronous extraction over the corpus, then a 120-document batch
 run, and writes everything into [`output/`](.):
 
 ```
-  wrote output/extract-<timestamp>.md
-  wrote output/extract-<timestamp>.json
-  wrote output/review-queue-extract-<timestamp>.jsonl
-  wrote output/batch-<timestamp>.md
-  wrote output/batch-<timestamp>.json
-  wrote output/review-queue-batch-<timestamp>.jsonl
+  wrote output/extract.md
+  wrote output/extract.json
+  wrote output/review-queue-extract.jsonl
+  wrote output/batch.md
+  wrote output/batch.json
+  wrote output/review-queue-batch.jsonl
 ```
 
 Without a valid key the run prints `Mode: mock (no ANTHROPIC_API_KEY ...)`, and
@@ -95,6 +95,7 @@ first line of output always says which mode ran and why.
 
 ```bash
 uv run pytest 4_prompt_engineering_and_structured_output/tests      # from the repo root; always offline, no key needed
+uv run python main.py 4      # also from the repo root: the root runner, with a summary
 ```
 
 ---

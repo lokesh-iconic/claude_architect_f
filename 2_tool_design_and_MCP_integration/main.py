@@ -12,7 +12,6 @@ import argparse
 import asyncio
 import json
 import sys
-import time
 from pathlib import Path
 
 MODULE_DIR = Path(__file__).resolve().parent
@@ -63,7 +62,7 @@ ERROR_PROBES: list[tuple[str, str, dict, dict[str, str]]] = [
 
 def write(name: str, content: str, quiet: bool) -> Path:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    path = OUTPUT_DIR / f"{name}-{time.strftime('%Y%m%d-%H%M%S')}.md"
+    path = OUTPUT_DIR / f"{name}.md"
     path.write_text(content, encoding="utf-8")
     if not quiet:
         print(f"  wrote {path.relative_to(MODULE_DIR)}")

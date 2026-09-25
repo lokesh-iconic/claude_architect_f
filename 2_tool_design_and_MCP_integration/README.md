@@ -32,10 +32,10 @@ uv run python main.py all
 That runs all four harnesses and writes their reports into [`output/`](.):
 
 ```
-  wrote output/selection-20260921-171859.md
-  wrote output/resources-20260921-171859.md
-  wrote output/errors-20260921-171913.md
-  wrote output/config-20260921-171915.md
+  wrote output/selection.md
+  wrote output/resources.md
+  wrote output/errors.md
+  wrote output/config.md
 ```
 
 To use the server from Claude Code, start a session in this directory — the
@@ -97,6 +97,7 @@ first line of output always says which mode ran and why.
 
 ```bash
 uv run pytest 2_tool_design_and_MCP_integration/tests      # from the repo root; always offline, no key needed
+uv run python main.py 2      # also from the repo root: the root runner, with a summary
 ```
 
 ---

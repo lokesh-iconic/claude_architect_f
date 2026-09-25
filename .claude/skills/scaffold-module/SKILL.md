@@ -20,7 +20,7 @@ build:
    `main.py`, `*/config/settings.py` and one `tests/*.py` file, to internalize the
    pattern: Problem statement / Quick start / How it works / Self-check table
    / Commands / Live vs mock mode / Layout / Known limits sections in the
-   README; a `main.py` with subcommands that write timestamped reports into a
+   README; a `main.py` with subcommands that write reports under fixed names (no timestamps) into a
    git-ignored `output/`; a `settings.py` resolving `mock`/`live`/`auto` at
    startup; a `tests/` suite with no live-network requirement.
 2. Pick the next unused top-level number for the new module directory.

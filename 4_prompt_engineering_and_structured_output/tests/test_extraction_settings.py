@@ -63,5 +63,5 @@ def test_cli_all_writes_every_artifact_into_output(no_key, tmp_path, monkeypatch
         batch_size=100, echo=False, quiet=True,
     )
     assert cli.run(args, output_dir=out) == 0
-    names = sorted(p.name.split("-2")[0] for p in out.iterdir())
+    names = sorted(p.stem for p in out.iterdir())
     assert names == ["batch", "batch", "extract", "extract", "review-queue-batch", "review-queue-extract"]

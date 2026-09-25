@@ -33,8 +33,8 @@ uv run python main.py "the impact of AI on creative industries"
 Every run writes a Markdown report and a JSON trace into [`output/`](.):
 
 ```
-Report : output/the-impact-of-ai-on-creative-industries-20260921-165650.md
-Trace  : output/the-impact-of-ai-on-creative-industries-20260921-165650.json
+Report : output/the-impact-of-ai-on-creative-industries.md
+Trace  : output/the-impact-of-ai-on-creative-industries.json
 ```
 
 Without a valid key the run prints `Mode : mock (no ANTHROPIC_API_KEY ...)` and
@@ -89,6 +89,7 @@ first line of output always says which mode ran and why.
 
 ```bash
 uv run pytest 1_agent_architecture_and_orchestration/tests      # from the repo root; always offline, no key needed
+uv run python main.py 1      # also from the repo root: the root runner, with a summary
 ```
 
 ---
