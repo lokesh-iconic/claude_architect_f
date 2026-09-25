@@ -8,6 +8,7 @@ builds, how to run it, and how to verify it.
 | [1_agent_architecture_and_orchestration/](1_agent_architecture_and_orchestration/) | A multi-agent research coordinator: decomposition, parallel delegation to specialist subagents, cited synthesis |
 | [2_tool_design_and_MCP_integration/](2_tool_design_and_MCP_integration/) | An issue-tracker MCP server: overlapping-tool disambiguation, structured errors, resources, project/user scopes |
 | [3_claude_code_configuration_and_workflows/](3_claude_code_configuration_and_workflows/) | Team Claude Code configuration (CLAUDE.md hierarchy, path-scoped rules, a slash command, a forked Skill) and a CI review pipeline with cross-run comment dedup |
+| [4_prompt_engineering_and_structured_output/](4_prompt_engineering_and_structured_output/) | A structured invoice-extraction pipeline: strict tool schema with nullable fields, few-shot prompting, validation-retry with error feedback, Message Batches with failed-only resubmission, confidence-based review routing |
 
 ## Setup
 
@@ -27,7 +28,7 @@ uv run python main.py "your topic"
 
 Without a valid `ANTHROPIC_API_KEY`, modules fall back to an offline mock mode
 so they still run end to end. Each module writes its results to its own
-`output/` folder, e.g. `output/the-impact-of-ai-on-creative-industries-20260921-165650.md`.
+`output/` folder, with a timestamp in each filename.
 
 ## Claude Code configuration
 

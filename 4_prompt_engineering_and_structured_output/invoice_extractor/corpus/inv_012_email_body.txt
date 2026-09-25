@@ -1,0 +1,14 @@
+From: Whitcombe Consulting <billing@whitcombe-consulting.example>
+Subject: Invoice WC-0042 for February
+
+Hi team,
+
+Here is our invoice for February. We spent 3 hours on the data migration
+review at our usual rate of $150/hr, so that's $450.00 in total.
+No tax applies. Please pay by 2026-03-15.
+
+Invoice number: WC-0042
+Invoice date: 2026-03-01
+
+Thanks,
+Whitcombe Consulting

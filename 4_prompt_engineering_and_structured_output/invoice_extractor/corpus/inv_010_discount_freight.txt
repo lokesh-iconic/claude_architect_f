@@ -1,0 +1,15 @@
+Summit Outdoor Gear - Wholesale
+Invoice: SOG-W-2026-221
+Invoice date: March 9, 2026
+Due date: 2026-03-24
+PO: SOG-PO-1187
+
+SKU      Item                          Qty   Price    Ext.
+TNT-2P   Ridgeline 2P tent               4   189.00   756.00
+SLP-15   Down sleeping bag, 15F          4   145.00   580.00
+         Freight (LTL)                              95.00
+         Wholesale discount 10%                   -133.60
+
+Subtotal:   1,297.40
+Sales tax:      0.00 (resale certificate on file)
+Total USD:  1,297.40

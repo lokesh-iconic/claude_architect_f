@@ -1,0 +1,14 @@
+Meridian IT Services Pty Ltd
+Tax Invoice
+Invoice Number: MIT-7781
+Issue Date: 2026-03-03
+Payment Due: 2026-03-31
+Your Order: WO-5512
+
+Managed backup service, March          500.00
+Endpoint security licences (25)        400.00
+Helpdesk support block (5 hrs)         250.00
+
+Subtotal                             1,200.00
+GST 10%                                120.00
+Total AUD                            1,320.00

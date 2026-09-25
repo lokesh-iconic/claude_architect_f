@@ -1,0 +1,15 @@
+Atelier Vogel & Söhne KG
+Rechnung / Invoice
+
+Rechnungsnummer: 2026-0087
+Rechnungsdatum: 05.03.2026
+Fällig am: 04.04.2026
+
+Pos  Beschreibung                      Menge   Einzelpreis     Betrag
+1    Eichenholz-Regal, maßgefertigt     1      1.450,00     1.450,00
+2    Montage vor Ort (Stunden)          6         55,00       330,00
+3    Anfahrt                            1         40,00        40,00
+
+Nettobetrag:        1.820,00 EUR
+MwSt. 19 %:           345,80 EUR
+Gesamtbetrag:       2.165,80 EUR

@@ -1,0 +1,12 @@
+PROFORMA INVOICE
+Orchid Textile Mills
+Proforma No.: OTM-PF-0456
+Date: 2026-03-12
+Valid until: 2026-04-11
+Buyer PO: LX-20260312
+
+Cotton poplin, 140cm, white      2,000 m   x 3.15  = 6,300.00
+Cotton twill, 150cm, navy        1,200 m   x 4.20  = 5,040.00
+Export packing                                      =   220.00
+
+Total (USD, FOB Chennai): 11,560.00
