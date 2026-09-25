@@ -6,11 +6,11 @@ import asyncio
 
 from mcp import Client
 
-from support_agent import handlers
-from support_agent.handlers import Faults
-from support_agent.probe_client import _call, server_params
-from support_agent.scenarios import DANA_VERIFY, converse
-from support_agent.session import ToolSession
+from support_agent.tools import handlers
+from support_agent.tools.handlers import Faults
+from support_agent.evaluation.probe_client import _call, server_params
+from support_agent.evaluation.scenarios import DANA_VERIFY, converse
+from support_agent.tools.session import ToolSession
 
 
 def _timeouts(record):

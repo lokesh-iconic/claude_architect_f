@@ -4,11 +4,11 @@ from __future__ import annotations
 
 import copy
 
-from invoice_extractor.backend import MockBackend, ModelTurn
-from invoice_extractor.corpus import GroundTruth
-from invoice_extractor.evaluate import evaluate
-from invoice_extractor.pipeline import PERSISTED, extract_all, extract_document
-from invoice_extractor.schema import TOOL_NAME
+from invoice_extractor.backends.backend import MockBackend, ModelTurn
+from invoice_extractor.evaluation.corpus import GroundTruth
+from invoice_extractor.evaluation.evaluate import evaluate
+from invoice_extractor.extraction.pipeline import PERSISTED, extract_all, extract_document
+from invoice_extractor.extraction.schema import TOOL_NAME
 
 
 def _tool_results(message):

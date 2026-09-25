@@ -20,9 +20,11 @@ OUTPUT_DIR = MODULE_DIR / "output"
 
 sys.path.insert(0, str(MODULE_DIR))
 
-from issue_tracker import config_check, probe_client, report, resource_eval  # noqa: E402
-from issue_tracker import selection as sel  # noqa: E402
-from issue_tracker.settings import load_settings  # noqa: E402
+from issue_tracker.config import config_check  # noqa: E402
+from issue_tracker.evaluation import probe_client, resource_eval  # noqa: E402
+from issue_tracker.reporting import report  # noqa: E402
+from issue_tracker.evaluation import selection as sel  # noqa: E402
+from issue_tracker.config.settings import load_settings  # noqa: E402
 
 ERROR_PROBES: list[tuple[str, str, dict, dict[str, str]]] = [
     (

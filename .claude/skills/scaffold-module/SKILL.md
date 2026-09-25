@@ -1,6 +1,6 @@
 ---
 name: scaffold-module
-description: Scaffold a new numbered problem-statement module by copying this repo's structural pattern (README, main.py CLI, mode-resolution settings.py, tests/). Use when the user wants to start a new N_topic_name/ module.
+description: Scaffold a new numbered problem-statement module by copying this repo's structural pattern (README, main.py CLI, a package split into config/ reporting/ and domain subpackages, tests/). Use when the user wants to start a new N_topic_name/ module.
 context: fork
 ---
 
@@ -17,7 +17,7 @@ build:
 
 1. Read `1_agent_architecture_and_orchestration/README.md` and
    `2_tool_design_and_MCP_integration/README.md` in full, plus each module's
-   `main.py`, `*/settings.py` and one `tests/*.py` file, to internalize the
+   `main.py`, `*/config/settings.py` and one `tests/*.py` file, to internalize the
    pattern: Problem statement / Quick start / How it works / Self-check table
    / Commands / Live vs mock mode / Layout / Known limits sections in the
    README; a `main.py` with subcommands that write timestamped reports into a
@@ -31,7 +31,9 @@ build:
      never fabricate a measurement).
    - `main.py` with an `argparse` CLI, an `all` subcommand, `--print` and
      `--quiet` flags, writing to `output/`.
-   - A `settings.py` implementing the same `mock`/`live`/`auto` resolution.
+   - A package with the subpackage layout described in root `CLAUDE.md` (at
+     least `config/settings.py` implementing the same `mock`/`live`/`auto`
+     resolution, and `reporting/`), and a *Folder structure* tree in the README.
    - `tests/conftest.py` and at least one real test file.
 4. Add the new module's `tests/` path to root `pyproject.toml`'s
    `[tool.pytest.ini_options] testpaths`, and add its row to the root

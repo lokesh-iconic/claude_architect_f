@@ -51,6 +51,56 @@ project-scoped [`.mcp.json`](.mcp.json) is picked up automatically — and run
 
 ---
 
+## How to run: mock and live
+
+Every command below runs from this directory. One-time setup, from the repo root:
+
+```bash
+uv sync
+cp .env.example .env      # only needed for live mode; .env is git-ignored
+```
+
+### Mock mode (offline, no API key)
+
+```bash
+uv run python main.py doctor           # first, on Windows especially: checks uv is on PATH
+uv run python main.py all --mode mock
+```
+
+Only the tool-selection eval has a live/mock split. In mock mode it's scored by
+a description-discriminability proxy. The `resources`, `errors` and `doctor`
+harnesses always drive the real MCP server over stdio, and no model is involved
+in either mode.
+
+### Live mode (real Claude API)
+
+1. Add your key to the repo-root `.env`: `ANTHROPIC_API_KEY=<your key>`. Never put it in a committed file.
+2. Run the selection eval against Claude (model: `MCP_EVAL_MODEL`, default `claude-opus-5`):
+
+```bash
+uv run python main.py selection --mode live --trials 5
+```
+
+To use the server itself from Claude Code, start a session in this directory.
+[`.mcp.json`](.mcp.json) is picked up automatically, and `/mcp` shows it
+connected. The server's `${TRACKER_API_TOKEN}` and `${TRACKER_BASE_URL}` are
+expanded from the environment Claude Code runs in (see *Configuration scopes*
+below).
+
+### Auto mode (the default)
+
+Leave `--mode` off and the module picks for you: live if `ANTHROPIC_API_KEY` is
+set and passes a zero-token `GET /v1/models/{id}` check, otherwise mock. The
+first line of output always says which mode ran and why.
+
+### Tests
+
+```bash
+uv run pytest 2_tool_design_and_MCP_integration/tests      # from the repo root; always offline, no key needed
+```
+
+---
+
 ## What the server exposes
 
 Four tools over stdio, backed by a sample tracker of nine issues across three
@@ -76,7 +126,7 @@ returns a confident, empty-ish result rather than an error. Most issues never
 mention their own file paths, so searching `session.py` finds nothing while
 two issues are genuinely linked to it.
 
-[`toolspecs.py`](issue_tracker/toolspecs.py) keeps both description
+[`toolspecs.py`](issue_tracker/tools/toolspecs.py) keeps both description
 generations side by side with **identical schemas**, so the evaluation
 isolates exactly one variable: the prose.
 
@@ -208,28 +258,47 @@ Four steps reach the defect having read two files out of eleven. Starting from
 
 ---
 
-## Layout
+## Folder structure
 
-| File | Role |
+```text
+2_tool_design_and_MCP_integration/
+├── main.py                      CLI for the harnesses: selection, resources, errors, doctor
+├── server.py                    stdio entry point; the command .mcp.json runs
+├── personal_scratchpad.py       The user-scope server: a cross-project note store
+├── .mcp.json                    Project-scoped server config with env expansion
+├── user_scope.example.json      The personal server, for user scope
+├── issue_tracker/
+│   ├── config/
+│   │   ├── settings.py          .env loading, live/mock resolution for the selection eval
+│   │   └── config_check.py      Scope and credential-expansion checks (doctor)
+│   ├── core/
+│   │   ├── errors.py            TrackerError, categories, payload parsing
+│   │   ├── data.py              Sample dataset
+│   │   └── store.py             Queries over the dataset
+│   ├── tools/
+│   │   ├── toolspecs.py         v1 and v2 descriptions, shared schemas
+│   │   ├── handlers.py          Tool implementations, transport-agnostic
+│   │   ├── resources.py         The three MCP resources
+│   │   └── mcp_server.py        MCP wiring: Annotated args, ToolError
+│   ├── evaluation/
+│   │   ├── selection.py         Tool-selection eval, live and proxy
+│   │   ├── resource_eval.py     Exploratory-call analysis
+│   │   └── probe_client.py      Real MCP client used by the harnesses and tests
+│   └── reporting/
+│       └── report.py            Markdown reports
+├── sample_service/              The codebase the issues point at
+├── tests/                       27 tests, most talking to a real server process
+└── output/                      Reports, written at runtime (git-ignored)
+```
+
+| Folder | Responsibility |
 |---|---|
-| [`server.py`](server.py) | stdio entry point; the command `.mcp.json` runs |
-| [`main.py`](main.py) | CLI for the four harnesses; writes into `output/` |
-| [`.mcp.json`](.mcp.json) | Project-scoped server config with env expansion |
-| [`user_scope.example.json`](user_scope.example.json) | The personal server, for user scope |
-| [`personal_scratchpad.py`](personal_scratchpad.py) | The user-scope server itself: a cross-project note store |
-| [`toolspecs.py`](issue_tracker/toolspecs.py) | v1 and v2 descriptions, shared schemas |
-| [`handlers.py`](issue_tracker/handlers.py) | Tool implementations, transport-agnostic |
-| [`mcp_server.py`](issue_tracker/mcp_server.py) | MCP wiring: `Annotated` args, `ToolError` |
-| [`errors.py`](issue_tracker/errors.py) | `TrackerError`, categories, payload parsing |
-| [`resources.py`](issue_tracker/resources.py) | The three MCP resources |
-| [`selection.py`](issue_tracker/selection.py) | Tool-selection eval, live and proxy |
-| [`resource_eval.py`](issue_tracker/resource_eval.py) | Exploratory-call analysis |
-| [`config_check.py`](issue_tracker/config_check.py) | Scope and credential-expansion checks |
-| [`probe_client.py`](issue_tracker/probe_client.py) | Real MCP client used by harnesses and tests |
-| [`data.py`](issue_tracker/data.py) / [`store.py`](issue_tracker/store.py) | Sample dataset and queries |
-| [`sample_service/`](sample_service/) | The codebase the issues point at |
-| [`tests/`](tests/) | 27 tests, most talking to a real server process |
-| `output/` | Reports, written at runtime (e.g. `output/selection-20260921-171859.md`) |
+| [`issue_tracker/config/`](issue_tracker/config/) | Settings, live/mock resolution, scope and credential checks |
+| [`issue_tracker/core/`](issue_tracker/core/) | The dataset, queries over it, and the structured error type |
+| [`issue_tracker/tools/`](issue_tracker/tools/) | Tool descriptions, handlers, resources and the MCP server |
+| [`issue_tracker/evaluation/`](issue_tracker/evaluation/) | Selection eval, resource analysis, the MCP probe client |
+| [`issue_tracker/reporting/`](issue_tracker/reporting/) | Report rendering |
+| [`sample_service/`](sample_service/) | The sample codebase the issues reference |
 
 ---
 
@@ -241,7 +310,7 @@ shaped the code:
 
 - **Only `ToolError` preserves an error message.** Any other exception becomes
   `"Error executing tool <name>"` and the structured payload is lost. The
-  message arrives prefixed, so [`parse_error_payload`](issue_tracker/errors.py)
+  message arrives prefixed, so [`parse_error_payload`](issue_tracker/core/errors.py)
   reads from the first brace.
 - **Schemas are generated from the function signature**, so field
   descriptions only exist if arguments are `Annotated[..., Field(...)]`.

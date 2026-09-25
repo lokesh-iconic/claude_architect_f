@@ -43,6 +43,56 @@ project's `.env` file (one directory up, shared by every module).
 
 ---
 
+## How to run: mock and live
+
+Every command below runs from this directory. One-time setup, from the repo root:
+
+```bash
+uv sync
+cp .env.example .env      # only needed for live mode; .env is git-ignored
+```
+
+### Mock mode (offline, no API key)
+
+```bash
+uv run python main.py "the impact of AI on creative industries" --mode mock
+uv run python main.py "the impact of AI on creative industries" --mode mock --simulate-timeout document_analyst --timeout 2
+```
+
+Decomposition and web research are scripted (`backends/mock_plans.py`), and every
+web source is marked `[SYNTHETIC]`. The orchestration, timeouts and attribution
+are the real code paths, and the document analyst reads the real files in
+`research_coordinator/corpus/`.
+
+### Live mode (real Claude API)
+
+1. Add your key to the repo-root `.env`: `ANTHROPIC_API_KEY=<your key>`. Never put it in a committed file.
+2. Run:
+
+```bash
+uv run python main.py "the impact of AI on creative industries" --mode live
+```
+
+The coordinator and every subagent call `claude-opus-5` with adaptive thinking,
+so this spends tokens. The web researcher uses Anthropic's server-side
+`web_search` tool; set `RC_ENABLE_WEB_SEARCH=false` in `.env` to keep live runs
+off the web. `--mode live` fails loudly if the key is missing or rejected,
+instead of quietly falling back to mock.
+
+### Auto mode (the default)
+
+Leave `--mode` off and the module picks for you: live if `ANTHROPIC_API_KEY` is
+set and passes a zero-token `GET /v1/models/{id}` check, otherwise mock. The
+first line of output always says which mode ran and why.
+
+### Tests
+
+```bash
+uv run pytest 1_agent_architecture_and_orchestration/tests      # from the repo root; always offline, no key needed
+```
+
+---
+
 ## How it works
 
 ```
@@ -64,7 +114,7 @@ project's `.env` file (one directory up, shared by every module).
             └────────────────────┘   └────────────────────────────┘
 ```
 
-The agentic loop ([`loop.py`](research_coordinator/loop.py)) drives every agent:
+The agentic loop ([`loop.py`](research_coordinator/orchestration/loop.py)) drives every agent:
 call the model, branch on `stop_reason`, run the tools it asked for, feed the
 results back, repeat. It continues while `stop_reason == "tool_use"` and stops
 on `"end_turn"`; `pause_turn`, `max_tokens`, and `refusal` each get their own
@@ -146,7 +196,7 @@ Full option list: `uv run python main.py --help`
 
 ## Live vs mock mode
 
-Mode is resolved once at startup by [`settings.py`](research_coordinator/settings.py):
+Mode is resolved once at startup by [`settings.py`](research_coordinator/config/settings.py):
 
 1. `--mode mock` → mock, always.
 2. No `ANTHROPIC_API_KEY` → mock.
@@ -178,22 +228,36 @@ coordinator (the synthesis and gap-review work) than on the subagents.
 
 ---
 
-## Layout
+## Folder structure
 
-| File | Role |
+```text
+1_agent_architecture_and_orchestration/
+├── main.py                      CLI: research a topic, write report + trace to output/
+├── research_coordinator/
+│   ├── config/
+│   │   └── settings.py          .env loading, live/mock resolution, key validation
+│   ├── orchestration/
+│   │   ├── orchestrator.py      The Task tool: spawning, timeouts, retries, source registry
+│   │   ├── loop.py              The agentic loop, stop_reason handling, allowlist enforcement
+│   │   ├── agents.py            AgentDefinitions: system prompt + tool allowlist per role
+│   │   └── tools.py             Tool schemas, executors, structured ToolError
+│   ├── backends/
+│   │   ├── backend.py           LiveBackend (Messages API) and MockBackend
+│   │   └── mock_plans.py        Deterministic plans used only in mock mode
+│   ├── reporting/
+│   │   └── report.py            Markdown report, generated bibliography, JSON trace
+│   └── corpus/                  Sample documents for the document analyst
+├── tests/                       18 tests, one per claim this README makes
+└── output/                      Reports and traces, written at runtime (git-ignored)
+```
+
+| Folder | Responsibility |
 |---|---|
-| [`main.py`](main.py) | CLI; writes every run into `output/` |
-| [`settings.py`](research_coordinator/settings.py) | `.env` loading, live/mock resolution, key validation |
-| [`agents.py`](research_coordinator/agents.py) | `AgentDefinition`s: system prompt + tool allowlist per role |
-| [`loop.py`](research_coordinator/loop.py) | The agentic loop, `stop_reason` handling, allowlist enforcement |
-| [`orchestrator.py`](research_coordinator/orchestrator.py) | The `Task` tool: spawning, timeouts, retries, source registry |
-| [`tools.py`](research_coordinator/tools.py) | Tool schemas, executors, structured `ToolError` |
-| [`backend.py`](research_coordinator/backend.py) | `LiveBackend` (Messages API) and `MockBackend` |
-| [`mock_plans.py`](research_coordinator/mock_plans.py) | Deterministic plans used only in mock mode |
-| [`report.py`](research_coordinator/report.py) | Markdown report, generated bibliography, JSON trace |
-| [`corpus/`](research_coordinator/corpus/) | Sample documents for the document analyst |
-| [`tests/`](tests/) | 18 tests, one per claim this README makes |
-| `output/` | Reports and traces, written at runtime (e.g. `output/the-impact-of-ai-on-creative-industries-20260921-165650.md`) |
+| [`research_coordinator/config/`](research_coordinator/config/) | Settings and live/mock mode resolution |
+| [`research_coordinator/orchestration/`](research_coordinator/orchestration/) | Coordinator, subagent loop, agent definitions, tools |
+| [`research_coordinator/backends/`](research_coordinator/backends/) | Live Claude backend and the offline mock |
+| [`research_coordinator/reporting/`](research_coordinator/reporting/) | Report and trace rendering |
+| [`research_coordinator/corpus/`](research_coordinator/corpus/) | Input documents for the document analyst |
 
 ---
 

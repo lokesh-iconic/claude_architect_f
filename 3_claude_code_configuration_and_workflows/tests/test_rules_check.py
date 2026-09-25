@@ -1,6 +1,6 @@
 """Self-check #2: each rule fires only for the files its `paths` glob names."""
 
-from review.rules_check import check_cases, load_rules
+from review.checks.rules_check import check_cases, load_rules
 
 
 def test_rules_load_with_expected_names_and_paths():
@@ -21,5 +21,5 @@ def test_each_sample_file_matches_exactly_the_expected_rules():
 
 def test_a_file_matching_neither_rule_stays_silent():
     rules = load_rules()
-    unrelated = "1_agent_architecture_and_orchestration/research_coordinator/agents.py"
+    unrelated = "1_agent_architecture_and_orchestration/research_coordinator/orchestration/agents.py"
     assert not any(r.matches(unrelated) for r in rules)

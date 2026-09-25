@@ -1,6 +1,6 @@
 import pytest
 
-from review.globmatch import glob_match
+from review.checks.globmatch import glob_match
 
 
 @pytest.mark.parametrize(

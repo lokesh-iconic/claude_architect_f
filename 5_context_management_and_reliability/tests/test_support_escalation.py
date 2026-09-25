@@ -7,9 +7,9 @@ from __future__ import annotations
 
 import pytest
 
-from support_agent.adversarial import PromptIgnoringBackend
-from support_agent.escalation import explicit_human_request
-from support_agent.scenarios import DANA_VERIFY, MARCUS_VERIFY, PRIYA_VERIFY, converse
+from support_agent.backends.adversarial import PromptIgnoringBackend
+from support_agent.conversation.escalation import explicit_human_request
+from support_agent.evaluation.scenarios import DANA_VERIFY, MARCUS_VERIFY, PRIYA_VERIFY, converse
 
 
 def _escalated(record, reason):

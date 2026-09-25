@@ -19,15 +19,15 @@ OUTPUT_DIR = MODULE_DIR / "output"
 
 sys.path.insert(0, str(MODULE_DIR))
 
-from invoice_extractor import report  # noqa: E402
-from invoice_extractor.backend import MockBackend, make_backend  # noqa: E402
-from invoice_extractor.batch import LiveBatchClient, MockBatchClient, run_batch  # noqa: E402
-from invoice_extractor.corpus import load_corpus, synthesize  # noqa: E402
-from invoice_extractor.errors import ExtractionError  # noqa: E402
-from invoice_extractor.evaluate import evaluate  # noqa: E402
-from invoice_extractor.pipeline import extract_all  # noqa: E402
-from invoice_extractor.schema import extraction_tool  # noqa: E402
-from invoice_extractor.settings import Settings, load_settings  # noqa: E402
+from invoice_extractor.reporting import report  # noqa: E402
+from invoice_extractor.backends.backend import MockBackend, make_backend  # noqa: E402
+from invoice_extractor.backends.batch import LiveBatchClient, MockBatchClient, run_batch  # noqa: E402
+from invoice_extractor.evaluation.corpus import load_corpus, synthesize  # noqa: E402
+from invoice_extractor.extraction.errors import ExtractionError  # noqa: E402
+from invoice_extractor.evaluation.evaluate import evaluate  # noqa: E402
+from invoice_extractor.extraction.pipeline import extract_all  # noqa: E402
+from invoice_extractor.extraction.schema import extraction_tool  # noqa: E402
+from invoice_extractor.config.settings import Settings, load_settings  # noqa: E402
 
 
 class Writer:

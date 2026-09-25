@@ -8,8 +8,8 @@ from pathlib import Path
 
 import pytest
 
-from support_agent import settings as settings_mod
-from support_agent.settings import load_settings
+from support_agent.config import settings as settings_mod
+from support_agent.config.settings import load_settings
 
 # Every module has a main.py; load this one by path so sys.modules["main"] can't collide.
 _spec = importlib.util.spec_from_file_location(

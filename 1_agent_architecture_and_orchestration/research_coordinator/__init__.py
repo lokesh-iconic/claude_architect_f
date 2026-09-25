@@ -1,11 +1,11 @@
 """A coordinator/subagent research system built on the Claude Messages API."""
 
-from .agents import AgentDefinition, build_agents
-from .backend import Backend, LiveBackend, MockBackend, build_backend
-from .loop import AgentFailure, run_agent
-from .orchestrator import Orchestrator, RunReport, SubagentRun
-from .report import render_markdown, render_trace
-from .settings import Settings, load_settings
+from .orchestration.agents import AgentDefinition, build_agents
+from .backends.backend import Backend, LiveBackend, MockBackend, build_backend
+from .orchestration.loop import AgentFailure, run_agent
+from .orchestration.orchestrator import Orchestrator, RunReport, SubagentRun
+from .reporting.report import render_markdown, render_trace
+from .config.settings import Settings, load_settings
 
 __all__ = [
     "AgentDefinition",

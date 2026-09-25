@@ -58,6 +58,56 @@ and `/mcp` confirms it connected.
 
 ---
 
+## How to run: mock and live
+
+Every command below runs from this directory. One-time setup, from the repo root:
+
+```bash
+uv sync
+cp .env.example .env      # only needed for live mode; .env is git-ignored
+```
+
+### Mock mode (offline, no API key)
+
+```bash
+uv run python main.py all --mode mock
+uv run python main.py context --mode mock    # just the 18-turn conversation and the ablation
+```
+
+The agent is the stateless rule-based stand-in in `backends/mock_agent.py`.
+Case facts, trimming, the refund gate, deadlines and the escalation backstop
+are the real code.
+
+### Live mode (real Claude API)
+
+1. Add your key to the repo-root `.env`: `ANTHROPIC_API_KEY=<your key>`. Never put it in a committed file.
+2. Run:
+
+```bash
+uv run python main.py escalation --mode live     # a short suite to start with
+uv run python main.py all --mode live
+```
+
+Agent turns and the summarizer call `claude-opus-5` (`SA_MODEL`). The
+enforcement fuzz, the adversarial backends and the `mcp` suite exercise the
+program directly, so they behave the same in both modes. To use the tools from
+Claude Code, start a session in this directory. [`.mcp.json`](.mcp.json)
+registers the `support-desk` server; confirm it with `/mcp`.
+
+### Auto mode (the default)
+
+Leave `--mode` off and the module picks for you: live if `ANTHROPIC_API_KEY` is
+set and passes a zero-token `GET /v1/models/{id}` check, otherwise mock. The
+first line of output always says which mode ran and why.
+
+### Tests
+
+```bash
+uv run pytest 5_context_management_and_reliability/tests      # from the repo root; always offline, no key needed
+```
+
+---
+
 ## How it works
 
 ```
@@ -84,10 +134,10 @@ and `/mcp` confirms it connected.
 
 ### Case facts are never summarized
 
-[`facts.py`](support_agent/facts.py). Transactional facts are extracted **by the
+[`facts.py`](support_agent/conversation/facts.py). Transactional facts are extracted **by the
 program, from successful tool results**, never from customer prose or model
 output. They're rendered as their own system block on every request. Older
-turns are folded into a narrative summary ([`memory.py`](support_agent/memory.py)),
+turns are folded into a narrative summary ([`memory.py`](support_agent/conversation/memory.py)),
 but the summary sits in the message history and the facts sit in the system
 prompt, so compaction can round, paraphrase or drop what it likes without
 touching an amount.
@@ -97,7 +147,7 @@ comes after it, so a changed fact never invalidates the cached prompt.
 
 ### Trimming is an allowlist
 
-[`trimming.py`](support_agent/trimming.py). The upstream records are shaped
+[`trimming.py`](support_agent/tools/trimming.py). The upstream records are shaped
 like real CRM and order-service responses: scan histories, warehouse bins,
 audit logs, device fingerprints, marketing preferences. Each tool has an
 explicit projection, so a field the upstream adds later stays out of context
@@ -107,7 +157,7 @@ against. A test checks that every field `facts.py` reads survives trimming.
 
 ### The refund prerequisite is program state
 
-[`session.py`](support_agent/session.py). `process_refund` is rejected before
+[`session.py`](support_agent/tools/session.py). `process_refund` is rejected before
 its handler runs unless `get_customer` returned `verified: true` for that exact
 `customer_id` earlier in the session. The prompt says the same thing, but
 nothing depends on the prompt being obeyed. The MCP server holds one
@@ -116,10 +166,10 @@ for any MCP client, not just this agent.
 
 ### Escalation: criteria in the prompt, a backstop in code
 
-[`prompts.py`](support_agent/prompts.py) lists the four criteria
+[`prompts.py`](support_agent/conversation/prompts.py) lists the four criteria
 (`customer_request`, `policy_gap`, `policy_limit`, `unable_to_progress`), with
 few-shot examples that include the counter-case: frustration alone is **not** a
-reason to escalate. [`escalation.py`](support_agent/escalation.py) is the
+reason to escalate. [`escalation.py`](support_agent/conversation/escalation.py) is the
 backstop for the unambiguous case. When the customer explicitly asks for a
 human, every other tool is blocked for that turn, and a turn that tries to end
 without escalating gets one harness nudge. The detector needs a request verb
@@ -141,10 +191,10 @@ bare ticket, however thin the model's summary is.
 
 | Build step | Where |
 |---|---|
-| Case-facts block carried in every turn, separate from summarized history | [`facts.py`](support_agent/facts.py), [`memory.py`](support_agent/memory.py), `SupportAgent.build_request` |
-| Trim verbose tool output to relevant fields | [`trimming.py`](support_agent/trimming.py) |
-| Block `process_refund` until `get_customer` returned a verified id | `ToolSession._require_verified` in [`session.py`](support_agent/session.py) |
-| Escalation criteria with few-shot examples | `SYSTEM_PROMPT` in [`prompts.py`](support_agent/prompts.py); backstop in [`agent.py`](support_agent/agent.py) |
+| Case-facts block carried in every turn, separate from summarized history | [`facts.py`](support_agent/conversation/facts.py), [`memory.py`](support_agent/conversation/memory.py), `SupportAgent.build_request` |
+| Trim verbose tool output to relevant fields | [`trimming.py`](support_agent/tools/trimming.py) |
+| Block `process_refund` until `get_customer` returned a verified id | `ToolSession._require_verified` in [`session.py`](support_agent/tools/session.py) |
+| Escalation criteria with few-shot examples | `SYSTEM_PROMPT` in [`prompts.py`](support_agent/conversation/prompts.py); backstop in [`agent.py`](support_agent/conversation/agent.py) |
 | Multi-concern message test | `decompose` suite, [`test_support_decompose.py`](tests/test_support_decompose.py) |
 | Simulated tool timeout, structured context | `errors` and `mcp` suites, [`test_support_errors.py`](tests/test_support_errors.py) |
 
@@ -204,7 +254,7 @@ MCP client.
 
 ## Live vs mock mode
 
-Mode is resolved once at startup by [`settings.py`](support_agent/settings.py):
+Mode is resolved once at startup by [`settings.py`](support_agent/config/settings.py):
 
 1. `--mode mock` always gives mock.
 2. With no `ANTHROPIC_API_KEY`, the mode is mock.
@@ -215,7 +265,7 @@ Mode is resolved once at startup by [`settings.py`](support_agent/settings.py):
 
 | | live | mock |
 |---|---|---|
-| Agent turns | Claude, with the four tools | rule-based agent in [`mock_agent.py`](support_agent/mock_agent.py) |
+| Agent turns | Claude, with the four tools | rule-based agent in [`mock_agent.py`](support_agent/backends/mock_agent.py) |
 | Summary of older turns | Claude, at low effort | deterministic paraphrase: rounds amounts, months for dates, drops emails |
 | Case facts, trimming, refund gate, deadlines, retry budget, escalation backstop | identical | identical |
 | Adversarial backends (reckless refunder, prompt-ignorer) and the fuzz | scripted in both modes | scripted in both modes |
@@ -236,34 +286,51 @@ Configuration lives in the project `.env`: `SA_MODEL`, `SA_EFFORT`,
 
 ---
 
-## Layout
+## Folder structure
 
-| File | Role |
+```text
+5_context_management_and_reliability/
+├── main.py                      CLI; writes every run into output/
+├── server.py                    stdio entry point; the command .mcp.json runs
+├── .mcp.json                    Project-scoped server config, settings by env expansion
+├── support_agent/
+│   ├── config/
+│   │   └── settings.py          .env loading, live/mock resolution, key validation
+│   ├── conversation/
+│   │   ├── agent.py             Per-turn loop, request building, escalation gate and nudge
+│   │   ├── prompts.py           System prompt, escalation criteria and few-shots, tool schemas
+│   │   ├── escalation.py        Explicit-human-request detector
+│   │   ├── memory.py            Verbatim window, summary, the mock summarizer
+│   │   └── facts.py             The case-facts block
+│   ├── tools/
+│   │   ├── handlers.py          The four tools, fault injection, progress for partial results
+│   │   ├── session.py           Refund prerequisite, deadlines, retry budget, trimming, fact extraction
+│   │   ├── trimming.py          Per-tool field allowlists, partial-result trimming
+│   │   ├── errors.py            SupportToolError (category, isRetryable, attempted, partialResults)
+│   │   ├── data.py              Synthetic customers and orders, raw records, refund policy
+│   │   └── mcp_server.py        MCP wiring: Annotated args, ToolError
+│   ├── backends/
+│   │   ├── backend.py           LiveBackend, LiveSummarizer, MockBackend
+│   │   ├── mock_agent.py        The stateless rule-based agent
+│   │   └── adversarial.py       Backends that break the rules on purpose
+│   ├── evaluation/
+│   │   ├── scenarios.py         Conversations and the checks run against them
+│   │   ├── enforcement.py       Random-sequence fuzz of the refund prerequisite
+│   │   └── probe_client.py      Real MCP client used by the mcp suite and tests
+│   └── reporting/
+│       └── report.py            Markdown reports and JSON traces
+├── tests/                       57 tests, none needing a key or the network
+└── output/                      Reports and traces, written at runtime (git-ignored)
+```
+
+| Folder | Responsibility |
 |---|---|
-| [`main.py`](main.py) | CLI; writes every run into `output/` |
-| [`server.py`](server.py) | stdio entry point; the command `.mcp.json` runs |
-| [`.mcp.json`](.mcp.json) | Project-scoped server config, settings by env expansion |
-| [`settings.py`](support_agent/settings.py) | `.env` loading, live/mock resolution, key validation |
-| [`agent.py`](support_agent/agent.py) | Per-turn loop, request building, escalation gate and nudge |
-| [`session.py`](support_agent/session.py) | Refund prerequisite, deadlines, retry budget, trimming, fact extraction |
-| [`facts.py`](support_agent/facts.py) | The case-facts block |
-| [`memory.py`](support_agent/memory.py) | Verbatim window, summary, the mock summarizer |
-| [`trimming.py`](support_agent/trimming.py) | Per-tool field allowlists, partial-result trimming |
-| [`handlers.py`](support_agent/handlers.py) | The four tools, fault injection, progress for partial results |
-| [`data.py`](support_agent/data.py) | Synthetic customers and orders, verbose raw records, refund policy |
-| [`prompts.py`](support_agent/prompts.py) | System prompt, escalation criteria and few-shots, tool schemas |
-| [`escalation.py`](support_agent/escalation.py) | Explicit-human-request detector |
-| [`errors.py`](support_agent/errors.py) | `SupportToolError` (category, `isRetryable`, `attempted`, `partialResults`) |
-| [`mcp_server.py`](support_agent/mcp_server.py) | MCP wiring: `Annotated` args, `ToolError` |
-| [`probe_client.py`](support_agent/probe_client.py) | Real MCP client used by the `mcp` suite and tests |
-| [`backend.py`](support_agent/backend.py) | `LiveBackend`, `LiveSummarizer`, `MockBackend` |
-| [`mock_agent.py`](support_agent/mock_agent.py) | The stateless rule-based agent |
-| [`adversarial.py`](support_agent/adversarial.py) | Backends that break the rules on purpose |
-| [`enforcement.py`](support_agent/enforcement.py) | Random-sequence fuzz of the refund prerequisite |
-| [`scenarios.py`](support_agent/scenarios.py) | Conversations and the checks run against them |
-| [`report.py`](support_agent/report.py) | Markdown reports and JSON traces |
-| [`tests/`](tests/) | 57 tests, none needing a key or the network |
-| `output/` | Reports and traces, written at runtime (e.g. `output/context-<timestamp>.md`) |
+| [`support_agent/config/`](support_agent/config/) | Settings and live/mock mode resolution |
+| [`support_agent/conversation/`](support_agent/conversation/) | The agent loop and what it carries between turns |
+| [`support_agent/tools/`](support_agent/tools/) | The four tools, the session every call goes through, the MCP server |
+| [`support_agent/backends/`](support_agent/backends/) | Live and mock model backends, and adversarial backends |
+| [`support_agent/evaluation/`](support_agent/evaluation/) | Scenario suites, the fuzz, the MCP probe client |
+| [`support_agent/reporting/`](support_agent/reporting/) | Report and trace rendering |
 
 ---
 

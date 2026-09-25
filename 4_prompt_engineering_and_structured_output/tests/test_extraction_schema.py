@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from invoice_extractor.corpus import MOCK_FAULTS
-from invoice_extractor.few_shot import EXAMPLES
-from invoice_extractor.models import Document, Extraction
-from invoice_extractor.prompts import system_prompt
-from invoice_extractor.schema import (
+from invoice_extractor.evaluation.corpus import MOCK_FAULTS
+from invoice_extractor.extraction.few_shot import EXAMPLES
+from invoice_extractor.extraction.models import Document, Extraction
+from invoice_extractor.extraction.prompts import system_prompt
+from invoice_extractor.extraction.schema import (
     HEADER_FIELDS,
     LINE_CATEGORIES,
     DOCUMENT_TYPES,
@@ -14,7 +14,7 @@ from invoice_extractor.schema import (
     extraction_tool,
     tool_choice_for,
 )
-from invoice_extractor.validation import validate
+from invoice_extractor.extraction.validation import validate
 
 
 def _walk_objects(schema):
@@ -123,7 +123,7 @@ def test_other_without_detail_is_a_retryable_format_issue():
 
 
 def test_european_number_format_is_recognised_as_grounded():
-    from invoice_extractor.validation import amount_in_text
+    from invoice_extractor.extraction.validation import amount_in_text
 
     assert amount_in_text(2165.80, "Gesamtbetrag: 2.165,80 EUR")
     assert amount_in_text(1297.40, "Total USD: 1,297.40")

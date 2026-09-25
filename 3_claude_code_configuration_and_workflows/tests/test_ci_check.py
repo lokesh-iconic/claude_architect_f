@@ -2,7 +2,7 @@
 does invoke `claude -p ... --output-format json` and post to the PR reviews
 API."""
 
-from review.ci_check import check_ci
+from review.checks.ci_check import check_ci
 
 
 def test_ci_pipeline_is_non_interactive_and_bounded():

@@ -9,8 +9,19 @@ more with its own `CLAUDE.md` (directory scope) or `.claude/rules/*.md`
 
 - One numbered top-level folder per problem statement
   (`1_agent_architecture_and_orchestration/`, `2_tool_design_and_MCP_integration/`,
-  `3_claude_code_configuration_and_workflows/`, ...). Each is self-contained:
-  its own `README.md`, its own `main.py` CLI, its own `tests/`.
+  `3_claude_code_configuration_and_workflows/`, ...), plus `capstone/`. Each
+  is self-contained: its own `README.md`, its own `main.py` CLI, its own
+  `tests/`.
+- Each module's code is one package split into subpackages by
+  responsibility, never a flat folder of modules. Always `config/` (holds
+  `settings.py`, with mode resolution) and `reporting/`; then whichever of
+  these apply: `backends/` (live and mock model backends), `tools/` (tool
+  handlers, schemas, MCP server), `evaluation/` (the scripted runs and checks
+  behind the README self-check table), plus a domain subpackage named for
+  what it does (`orchestration/`, `conversation/`, `extraction/`,
+  `pipeline/`, ...). Subpackage `__init__.py` files stay empty apart from a
+  docstring, so the import graph doesn't change when files move. Each README
+  has a *Folder structure* tree; update it when you add a file.
 - A module's `main.py` writes every run's output into that module's own
   `output/` (git-ignored). Never write run artifacts anywhere else.
 - Root `pyproject.toml` is shared: one venv, one `uv sync`, one
@@ -30,7 +41,7 @@ input or a network call with no timeout.
 
 - Prefer `dataclasses` over bare dicts for anything with a fixed shape.
 - Raise a specific, structured error type at the boundary that can fail
-  (see `issue_tracker.errors.ToolError` for the pattern: category,
+  (see `issue_tracker.core.errors.ToolError` for the pattern: category,
   `isRetryable`, remediation) rather than a bare `Exception`/`ValueError`.
 - No new third-party dependency without discussion first — the dependency
   list is deliberately short (`anthropic`, `mcp`, `python-dotenv`, `pytest`).

@@ -12,12 +12,12 @@ from pathlib import Path
 
 import pytest
 
-from research_coordinator.agents import build_agents
-from research_coordinator.backend import ModelResponse, TextBlock, ToolUseBlock
-from research_coordinator.loop import AgentFailure, run_agent
-from research_coordinator.orchestrator import Orchestrator
-from research_coordinator.settings import DEFAULT_CORPUS, Settings
-from research_coordinator.tools import ToolContext, ToolError, exec_read_document
+from research_coordinator.orchestration.agents import build_agents
+from research_coordinator.backends.backend import ModelResponse, TextBlock, ToolUseBlock
+from research_coordinator.orchestration.loop import AgentFailure, run_agent
+from research_coordinator.orchestration.orchestrator import Orchestrator
+from research_coordinator.config.settings import DEFAULT_CORPUS, Settings
+from research_coordinator.orchestration.tools import ToolContext, ToolError, exec_read_document
 
 
 def make_settings(**overrides) -> Settings:
@@ -307,7 +307,7 @@ def test_task_rejects_an_unknown_specialist():
 
 
 def test_missing_key_falls_back_to_mock(tmp_path: Path, monkeypatch):
-    from research_coordinator.settings import load_settings
+    from research_coordinator.config.settings import load_settings
 
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
     env = tmp_path / ".env"
@@ -319,7 +319,7 @@ def test_missing_key_falls_back_to_mock(tmp_path: Path, monkeypatch):
 
 
 def test_invalid_key_falls_back_to_mock(tmp_path: Path, monkeypatch):
-    import research_coordinator.settings as settings_module
+    import research_coordinator.config.settings as settings_module
 
     monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-not-a-real-key")
     monkeypatch.setattr(
@@ -332,7 +332,7 @@ def test_invalid_key_falls_back_to_mock(tmp_path: Path, monkeypatch):
 
 
 def test_valid_key_selects_live_mode(tmp_path: Path, monkeypatch):
-    import research_coordinator.settings as settings_module
+    import research_coordinator.config.settings as settings_module
 
     monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-looks-real")
     monkeypatch.setattr(settings_module, "_validate_key", lambda key, model: (True, "ok"))
