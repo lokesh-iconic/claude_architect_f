@@ -30,7 +30,7 @@ uv run python main.py "your topic"
 
 Without a valid `ANTHROPIC_API_KEY`, modules fall back to an offline mock mode
 so they still run end to end. Each module writes its results to its own
-`output/` folder, with a timestamp in each filename.
+`output/` folder under a fixed name (e.g. `output/context.md`); each run overwrites the previous one.
 
 ## Mock or live
 
@@ -43,8 +43,25 @@ Every module takes `--mode mock | live | auto`:
 | *(omitted)* = `auto` | Live if the key validates, otherwise mock; the first output line says which | — |
 
 Each module's README has a **How to run: mock and live** section with the
-exact commands, and says which parts actually call the model. Tests never
-need a key: `uv run pytest` from the repo root runs every module offline.
+exact commands, and says which parts actually call the model.
+
+## Running every test suite
+
+Tests never need a key or the network. From the repo root:
+
+```bash
+uv run python main.py                 # all five domains, then the capstone, with a summary table
+uv run python main.py 1 2 3 4 5       # the five domains only
+uv run python main.py 3 capstone      # any subset
+uv run python main.py -k escalat      # pass a pytest -k expression through
+uv run python main.py 5 -v            # stream pytest's verbose output
+uv run python main.py --fail-fast     # stop at the first module that doesn't pass
+```
+
+Each module runs in its own pytest process, with a per-module time limit
+(`--timeout`, default 900 s). The command exits non-zero if any module fails,
+errors, times out, or collects no tests. `uv run pytest` also works, and runs
+everything in one process.
 
 ## Module layout
 
@@ -54,7 +71,7 @@ opened before:
 ```text
 <module>/
 ├── README.md          what it builds, how to run it (mock and live), self-check, folder structure
-├── main.py            the CLI; writes timestamped reports into output/
+├── main.py            the CLI; writes reports into output/ under fixed names
 ├── <package>/
 │   ├── config/        settings.py: .env loading and mock/live/auto resolution
 │   ├── <domain>/      the core logic (orchestration/, conversation/, extraction/, pipeline/, ...)

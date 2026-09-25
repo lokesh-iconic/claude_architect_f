@@ -37,13 +37,13 @@ That runs all six suites and writes a report and a trace for each into
 [`output/`](.):
 
 ```
-  wrote output/context-<timestamp>.md
-  wrote output/context-<timestamp>.json
-  wrote output/escalation-<timestamp>.md
-  wrote output/decompose-<timestamp>.md
-  wrote output/enforcement-<timestamp>.md
-  wrote output/errors-<timestamp>.md
-  wrote output/mcp-<timestamp>.md
+  wrote output/context.md
+  wrote output/context.json
+  wrote output/escalation.md
+  wrote output/decompose.md
+  wrote output/enforcement.md
+  wrote output/errors.md
+  wrote output/mcp.md
   ...
 ```
 
@@ -104,6 +104,7 @@ first line of output always says which mode ran and why.
 
 ```bash
 uv run pytest 5_context_management_and_reliability/tests      # from the repo root; always offline, no key needed
+uv run python main.py 5      # also from the repo root: the root runner, with a summary
 ```
 
 ---

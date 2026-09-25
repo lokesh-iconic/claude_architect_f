@@ -43,12 +43,12 @@ That runs the conversation set and the five per-domain suites, and writes a
 report and a trace for each into [`output/`](.):
 
 ```
-  wrote output/scenarios-<timestamp>.md
-  wrote output/loop-<timestamp>.md
-  wrote output/tools-<timestamp>.md
-  wrote output/actions-<timestamp>.md
-  wrote output/context-<timestamp>.md
-  wrote output/workflow-<timestamp>.md
+  wrote output/scenarios.md
+  wrote output/loop.md
+  wrote output/tools.md
+  wrote output/actions.md
+  wrote output/context.md
+  wrote output/workflow.md
   ...
 ```
 
@@ -110,6 +110,7 @@ first line of output always says which mode ran and why.
 
 ```bash
 uv run pytest capstone/tests      # from the repo root; always offline, no key needed
+uv run python main.py capstone      # also from the repo root: the root runner, with a summary
 ```
 
 ---

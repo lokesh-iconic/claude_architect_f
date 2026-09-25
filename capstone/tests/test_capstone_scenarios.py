@@ -70,5 +70,5 @@ def test_cli_all_writes_every_report_into_output_and_passes(no_key, tmp_path):
     args = argparse.Namespace(command="all", only=None, mode="mock", keep_recent=None, tool_timeout=0.5,
                               fuzz=200, echo=False, quiet=True)
     assert cli.run(args, output_dir=out) == 0
-    names = sorted(p.name.rsplit("-", 2)[0] + p.suffix for p in out.iterdir())
+    names = sorted(p.name for p in out.iterdir())
     assert names == sorted(f"{n}{s}" for n in cli.ORDER for s in (".md", ".json"))

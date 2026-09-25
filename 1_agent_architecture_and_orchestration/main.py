@@ -11,7 +11,6 @@ import argparse
 import asyncio
 import re
 import sys
-import time
 from pathlib import Path
 
 MODULE_DIR = Path(__file__).resolve().parent
@@ -60,10 +59,10 @@ def build_parser() -> argparse.ArgumentParser:
         help="Force this subagent (e.g. document_analyst) to blow its deadline.",
     )
     parser.add_argument(
-        "--out", type=Path, help="Override the report path (default: ./output/<topic>-<stamp>.md)."
+        "--out", type=Path, help="Override the report path (default: ./output/<topic>.md)."
     )
     parser.add_argument(
-        "--trace", type=Path, help="Override the trace path (default: ./output/<topic>-<stamp>.json)."
+        "--trace", type=Path, help="Override the trace path (default: ./output/<topic>.json)."
     )
     parser.add_argument("--print", dest="echo", action="store_true", help="Also print the report.")
     parser.add_argument("--quiet", action="store_true", help="Suppress progress output.")
@@ -95,8 +94,7 @@ async def run(args: argparse.Namespace) -> int:
 
     # Every run is persisted, so a report is never lost to a scrolled-away
     # terminal. output/ is git-ignored.
-    stamp = time.strftime("%Y%m%d-%H%M%S")
-    basename = f"{slugify(args.topic)}-{stamp}"
+    basename = slugify(args.topic)  # one file per topic; a rerun overwrites it
     report_path = args.out or OUTPUT_DIR / f"{basename}.md"
     trace_path = args.trace or OUTPUT_DIR / f"{basename}.json"
 

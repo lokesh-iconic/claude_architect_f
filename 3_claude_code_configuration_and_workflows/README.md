@@ -38,10 +38,10 @@ That runs all four checks and writes reports into this module's
 [`output/`](.):
 
 ```
-  wrote output/hierarchy-20260922-154253.md
-  wrote output/rules-20260922-154253.md
-  wrote output/ci-20260922-154253.md
-  wrote output/review-20260922-154253.md
+  wrote output/hierarchy.md
+  wrote output/rules.md
+  wrote output/ci.md
+  wrote output/review.md
 ```
 
 To see the config live in Claude Code, start a session at the repo root and:
@@ -110,6 +110,7 @@ is set, otherwise mock, with the reason printed.
 
 ```bash
 uv run pytest 3_claude_code_configuration_and_workflows/tests      # always offline
+uv run python main.py 3      # also from the repo root: the root runner, with a summary
 ```
 
 ---

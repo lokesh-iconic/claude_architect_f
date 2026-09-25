@@ -12,7 +12,6 @@ import argparse
 import asyncio
 import json
 import sys
-import time
 from pathlib import Path
 
 MODULE_DIR = Path(__file__).resolve().parent
@@ -31,12 +30,11 @@ class Writer:
     def __init__(self, quiet: bool, output_dir: Path = OUTPUT_DIR) -> None:
         self.quiet = quiet
         self.output_dir = output_dir
-        self.stamp = time.strftime("%Y%m%d-%H%M%S")
         self.written: list[Path] = []
 
     def write(self, name: str, suffix: str, content: str) -> Path:
         self.output_dir.mkdir(parents=True, exist_ok=True)
-        path = self.output_dir / f"{name}-{self.stamp}{suffix}"
+        path = self.output_dir / f"{name}{suffix}"
         path.write_text(content, encoding="utf-8")
         self.written.append(path)
         if not self.quiet:

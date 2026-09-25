@@ -18,8 +18,8 @@ Then report:
 
 1. The mode line, verbatim.
 2. A table with one row per scenario: `scenario | domain | PASS/FAIL | checks`.
-   For every FAIL, quote the failing claim and its evidence from the newest
-   `capstone/output/scenarios-*.md`.
+   For every FAIL, quote the failing claim and its evidence from
+   `capstone/output/scenarios.md` (each run overwrites it).
 3. One line with the totals, and the path of the report that was written.
 
 If the mode is mock, say that the results show the harness works, not how

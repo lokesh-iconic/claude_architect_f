@@ -24,9 +24,12 @@ more with its own `CLAUDE.md` (directory scope) or `.claude/rules/*.md`
   has a *Folder structure* tree; update it when you add a file.
 - A module's `main.py` writes every run's output into that module's own
   `output/` (git-ignored). Never write run artifacts anywhere else.
+- Output filenames are fixed per run type (`output/context.md`, not
+  `output/context-<timestamp>.md`); a rerun overwrites the previous file.
 - Root `pyproject.toml` is shared: one venv, one `uv sync`, one
   `[tool.pytest.ini_options] testpaths` list. When you add a module with
-  tests, add its `tests/` directory to that list.
+  tests, add its `tests/` directory to that list and to `MODULES` in the root
+  `main.py`, which runs every module's suite (`uv run python main.py`).
 
 ## Live/mock mode
 
