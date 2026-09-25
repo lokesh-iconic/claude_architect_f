@@ -1,0 +1,17 @@
+CREDIT NOTE
+
+Kestrel Lab Consumables GmbH
+Credit Note No.: CN-5530
+Date: 2026-03-11
+Original Invoice: KLC-90871
+Customer PO: 4500-2291
+
+Reason: damaged in transit
+
+Item                              Qty    Unit     Line total
+Nitrile gloves, M (box of 100)    -5     12.00      -60.00
+Pipette tips 200ul (rack)         -2     18.40      -36.80
+
+Net amount:   -96.80
+VAT 19%:      -18.39
+Total credit: -115.19 EUR

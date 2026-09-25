@@ -1,0 +1,232 @@
+{
+  "_format": "Hand-labelled expected extraction per document. Header fields are [value, evidence-quote]; [null, null] means the document does not state it. mock_fault is the defect the mock backend injects into its first attempt; low_confidence lists fields the mock reports below threshold.",
+  "inv_001_standard": {
+    "mock_fault": null,
+    "low_confidence": [],
+    "document_type": "invoice", "document_type_detail": null,
+    "vendor_name": ["Northwind Office Supply Ltd", "NORTHWIND OFFICE SUPPLY LTD"],
+    "invoice_number": ["NW-2026-0412", "Invoice No: NW-2026-0412"],
+    "invoice_date": ["2026-03-02", "Invoice Date: 2026-03-02"],
+    "due_date": ["2026-04-01", "Due Date: 2026-04-01"],
+    "purchase_order": ["PO-77815", "PO Number: PO-77815"],
+    "currency": ["GBP", "Currency: GBP"],
+    "subtotal": [542.50, "Subtotal: 542.50"],
+    "tax": [108.50, "VAT (20%): 108.50"],
+    "total": [651.00, "Total: 651.00"],
+    "line_items": [
+      {"description": "A4 copier paper, 80gsm (box of 5)", "quantity": 10, "unit_price": 24.50, "amount": 245.00, "category": "goods", "category_detail": null, "evidence": "A4 copier paper, 80gsm (box of 5) 10 24.50 245.00"},
+      {"description": "Black toner cartridge TN-2420", "quantity": 4, "unit_price": 61.25, "amount": 245.00, "category": "goods", "category_detail": null, "evidence": "Black toner cartridge TN-2420 4 61.25 245.00"},
+      {"description": "Desk organiser, mesh", "quantity": 6, "unit_price": 8.75, "amount": 52.50, "category": "goods", "category_detail": null, "evidence": "Desk organiser, mesh 6 8.75 52.50"}
+    ]
+  },
+  "inv_002_missing_due_date": {
+    "mock_fault": "fabricate_due_date",
+    "low_confidence": [],
+    "document_type": "invoice", "document_type_detail": null,
+    "vendor_name": ["Brightline Studio", "Brightline Studio"],
+    "invoice_number": ["BLS-118", "Invoice #: BLS-118"],
+    "invoice_date": ["2026-02-14", "Date: 2026-02-14"],
+    "due_date": [null, null],
+    "purchase_order": [null, null],
+    "currency": ["USD", "Total (USD): 1,980.00"],
+    "subtotal": [null, null],
+    "tax": [null, null],
+    "total": [1980.00, "Total (USD): 1,980.00"],
+    "line_items": [
+      {"description": "Cover illustration, The Salt Road", "quantity": null, "unit_price": null, "amount": 1200.00, "category": "services", "category_detail": null, "evidence": "Cover illustration, The Salt Road 1,200.00"},
+      {"description": "Interior spot illustrations", "quantity": 8, "unit_price": 75.00, "amount": 600.00, "category": "services", "category_detail": null, "evidence": "Interior spot illustrations (8 @ 75.00) 600.00"},
+      {"description": "Revisions", "quantity": 3, "unit_price": 60.00, "amount": 180.00, "category": "services", "category_detail": null, "evidence": "Revisions, 3 hours @ 60.00/hr 180.00"}
+    ]
+  },
+  "inv_003_credit_note": {
+    "mock_fault": null,
+    "low_confidence": [],
+    "document_type": "credit_note", "document_type_detail": null,
+    "vendor_name": ["Kestrel Lab Consumables GmbH", "Kestrel Lab Consumables GmbH"],
+    "invoice_number": ["CN-5530", "Credit Note No.: CN-5530"],
+    "invoice_date": ["2026-03-11", "Date: 2026-03-11"],
+    "due_date": [null, null],
+    "purchase_order": ["4500-2291", "Customer PO: 4500-2291"],
+    "currency": ["EUR", "Total credit: -115.19 EUR"],
+    "subtotal": [-96.80, "Net amount: -96.80"],
+    "tax": [-18.39, "VAT 19%: -18.39"],
+    "total": [-115.19, "Total credit: -115.19 EUR"],
+    "line_items": [
+      {"description": "Nitrile gloves, M (box of 100)", "quantity": -5, "unit_price": 12.00, "amount": -60.00, "category": "goods", "category_detail": null, "evidence": "Nitrile gloves, M (box of 100) -5 12.00 -60.00"},
+      {"description": "Pipette tips 200ul (rack)", "quantity": -2, "unit_price": 18.40, "amount": -36.80, "category": "goods", "category_detail": null, "evidence": "Pipette tips 200ul (rack) -2 18.40 -36.80"}
+    ]
+  },
+  "inv_004_european_format": {
+    "mock_fault": null,
+    "low_confidence": [],
+    "document_type": "invoice", "document_type_detail": null,
+    "vendor_name": ["Atelier Vogel & Söhne KG", "Atelier Vogel & Söhne KG"],
+    "invoice_number": ["2026-0087", "Rechnungsnummer: 2026-0087"],
+    "invoice_date": ["2026-03-05", "Rechnungsdatum: 05.03.2026"],
+    "due_date": ["2026-04-04", "Fällig am: 04.04.2026"],
+    "purchase_order": [null, null],
+    "currency": ["EUR", "Gesamtbetrag: 2.165,80 EUR"],
+    "subtotal": [1820.00, "Nettobetrag: 1.820,00 EUR"],
+    "tax": [345.80, "MwSt. 19 %: 345,80 EUR"],
+    "total": [2165.80, "Gesamtbetrag: 2.165,80 EUR"],
+    "line_items": [
+      {"description": "Eichenholz-Regal, maßgefertigt", "quantity": 1, "unit_price": 1450.00, "amount": 1450.00, "category": "goods", "category_detail": null, "evidence": "Eichenholz-Regal, maßgefertigt 1 1.450,00 1.450,00"},
+      {"description": "Montage vor Ort (Stunden)", "quantity": 6, "unit_price": 55.00, "amount": 330.00, "category": "services", "category_detail": null, "evidence": "Montage vor Ort (Stunden) 6 55,00 330,00"},
+      {"description": "Anfahrt", "quantity": 1, "unit_price": 40.00, "amount": 40.00, "category": "fee", "category_detail": null, "evidence": "Anfahrt 1 40,00 40,00"}
+    ]
+  },
+  "inv_005_five_line_freight": {
+    "mock_fault": "drop_line_item",
+    "low_confidence": [],
+    "document_type": "invoice", "document_type_detail": null,
+    "vendor_name": ["Pacific Rim Logistics Inc.", "Pacific Rim Logistics Inc."],
+    "invoice_number": ["PRL-44102", "INVOICE PRL-44102"],
+    "invoice_date": ["2026-03-18", "Date: 2026-03-18"],
+    "due_date": ["2026-04-17", "Due: 2026-04-17"],
+    "purchase_order": ["SHIP-3391", "Customer Ref (PO): SHIP-3391"],
+    "currency": ["USD", "Amount (USD)"],
+    "subtotal": [5102.00, "Subtotal 5,102.00"],
+    "tax": [0.00, "Tax 0.00"],
+    "total": [5102.00, "TOTAL DUE 5,102.00"],
+    "line_items": [
+      {"description": "Ocean freight, 40ft container SHA-LAX", "quantity": null, "unit_price": null, "amount": 3850.00, "category": "shipping", "category_detail": null, "evidence": "Ocean freight, 40ft container SHA-LAX 3,850.00"},
+      {"description": "Fuel surcharge (BAF)", "quantity": null, "unit_price": null, "amount": 412.00, "category": "fee", "category_detail": null, "evidence": "Fuel surcharge (BAF) 412.00"},
+      {"description": "Port handling, origin", "quantity": null, "unit_price": null, "amount": 265.00, "category": "services", "category_detail": null, "evidence": "Port handling, origin 265.00"},
+      {"description": "Customs clearance, destination", "quantity": null, "unit_price": null, "amount": 180.00, "category": "services", "category_detail": null, "evidence": "Customs clearance, destination 180.00"},
+      {"description": "Drayage to warehouse", "quantity": null, "unit_price": null, "amount": 395.00, "category": "shipping", "category_detail": null, "evidence": "Drayage to warehouse 395.00"}
+    ]
+  },
+  "inv_006_receipt_no_number": {
+    "mock_fault": null,
+    "low_confidence": [],
+    "document_type": "receipt", "document_type_detail": null,
+    "vendor_name": ["The Copper Kettle Cafe", "THE COPPER KETTLE CAFE"],
+    "invoice_number": [null, null],
+    "invoice_date": ["2026-03-20", "2026-03-20 12:41"],
+    "due_date": [null, null],
+    "purchase_order": [null, null],
+    "currency": ["GBP", "TOTAL GBP 15.85"],
+    "subtotal": [null, null],
+    "tax": [null, null],
+    "total": [15.85, "TOTAL GBP 15.85"],
+    "line_items": [
+      {"description": "Flat white", "quantity": 2, "unit_price": 3.40, "amount": 6.80, "category": "goods", "category_detail": null, "evidence": "2 x Flat white @3.40 6.80"},
+      {"description": "Cheese toastie", "quantity": 1, "unit_price": 6.95, "amount": 6.95, "category": "goods", "category_detail": null, "evidence": "1 x Cheese toastie @6.95 6.95"},
+      {"description": "Sparkling water", "quantity": 1, "unit_price": 2.10, "amount": 2.10, "category": "goods", "category_detail": null, "evidence": "1 x Sparkling water @2.10 2.10"}
+    ]
+  },
+  "inv_007_source_inconsistent": {
+    "mock_fault": null,
+    "low_confidence": [],
+    "document_type": "invoice", "document_type_detail": null,
+    "vendor_name": ["Meridian IT Services Pty Ltd", "Meridian IT Services Pty Ltd"],
+    "invoice_number": ["MIT-7781", "Invoice Number: MIT-7781"],
+    "invoice_date": ["2026-03-03", "Issue Date: 2026-03-03"],
+    "due_date": ["2026-03-31", "Payment Due: 2026-03-31"],
+    "purchase_order": ["WO-5512", "Your Order: WO-5512"],
+    "currency": ["AUD", "Total AUD 1,320.00"],
+    "subtotal": [1200.00, "Subtotal 1,200.00"],
+    "tax": [120.00, "GST 10% 120.00"],
+    "total": [1320.00, "Total AUD 1,320.00"],
+    "line_items": [
+      {"description": "Managed backup service, March", "quantity": null, "unit_price": null, "amount": 500.00, "category": "services", "category_detail": null, "evidence": "Managed backup service, March 500.00"},
+      {"description": "Endpoint security licences (25)", "quantity": null, "unit_price": null, "amount": 400.00, "category": "services", "category_detail": null, "evidence": "Endpoint security licences (25) 400.00"},
+      {"description": "Helpdesk support block (5 hrs)", "quantity": null, "unit_price": null, "amount": 250.00, "category": "services", "category_detail": null, "evidence": "Helpdesk support block (5 hrs) 250.00"}
+    ]
+  },
+  "inv_008_statement_other_category": {
+    "mock_fault": "other_without_detail",
+    "low_confidence": [],
+    "document_type": "other", "document_type_detail": "statement of charges",
+    "vendor_name": ["Greenfield Events Co.", "GREENFIELD EVENTS CO."],
+    "invoice_number": ["GEC-EXPO-0319", "Reference: GEC-EXPO-0319"],
+    "invoice_date": ["2026-03-19", "Date issued: 2026-03-19"],
+    "due_date": ["2026-04-18", "Payment due: 2026-04-18"],
+    "purchase_order": [null, null],
+    "currency": ["CAD", "Total payable (CAD): 2,775.00"],
+    "subtotal": [null, null],
+    "tax": [null, null],
+    "total": [2775.00, "Total payable (CAD): 2,775.00"],
+    "line_items": [
+      {"description": "Exhibitor booth 3x3m", "quantity": null, "unit_price": null, "amount": 2400.00, "category": "services", "category_detail": null, "evidence": "Exhibitor booth 3x3m 2,400.00"},
+      {"description": "Booth electrical hookup", "quantity": null, "unit_price": null, "amount": 180.00, "category": "services", "category_detail": null, "evidence": "Booth electrical hookup 180.00"},
+      {"description": "Carbon offset contribution (voluntary)", "quantity": null, "unit_price": null, "amount": 45.00, "category": "other", "category_detail": "voluntary carbon offset contribution", "evidence": "Carbon offset contribution (voluntary) 45.00"},
+      {"description": "Late registration fee", "quantity": null, "unit_price": null, "amount": 150.00, "category": "fee", "category_detail": null, "evidence": "Late registration fee 150.00"}
+    ]
+  },
+  "inv_009_ocr_noisy": {
+    "mock_fault": null,
+    "low_confidence": ["vendor_name", "invoice_date"],
+    "document_type": "invoice", "document_type_detail": null,
+    "vendor_name": ["Holloway Plumbing & Heating", "H0LLOWAY PLUMBING & HEAT1NG"],
+    "invoice_number": ["20931", "lnvoice N0. 20931"],
+    "invoice_date": ["2026-04-03", "Date: 03/04/2026"],
+    "due_date": [null, null],
+    "purchase_order": [null, null],
+    "currency": ["GBP", "T0TAL DUE £256.20"],
+    "subtotal": [213.50, "Sub t0tal 213.50"],
+    "tax": [42.70, "VAT 20% 42.70"],
+    "total": [256.20, "T0TAL DUE £256.20"],
+    "line_items": [
+      {"description": "Labour", "quantity": 2.0, "unit_price": 68.00, "amount": 136.00, "category": "services", "category_detail": null, "evidence": "Labour 2.0 hrs @ 68.00 136.00"},
+      {"description": "Parts - pressure relief valve", "quantity": null, "unit_price": null, "amount": 42.50, "category": "goods", "category_detail": null, "evidence": "Parts - pressure relief valve 42.50"},
+      {"description": "Call-out charge", "quantity": null, "unit_price": null, "amount": 35.00, "category": "fee", "category_detail": null, "evidence": "Call-out charge 35.00"}
+    ]
+  },
+  "inv_010_discount_freight": {
+    "mock_fault": null,
+    "low_confidence": [],
+    "document_type": "invoice", "document_type_detail": null,
+    "vendor_name": ["Summit Outdoor Gear", "Summit Outdoor Gear - Wholesale"],
+    "invoice_number": ["SOG-W-2026-221", "Invoice: SOG-W-2026-221"],
+    "invoice_date": ["2026-03-09", "Invoice date: March 9, 2026"],
+    "due_date": ["2026-03-24", "Due date: 2026-03-24"],
+    "purchase_order": ["SOG-PO-1187", "PO: SOG-PO-1187"],
+    "currency": ["USD", "Total USD: 1,297.40"],
+    "subtotal": [1297.40, "Subtotal: 1,297.40"],
+    "tax": [0.00, "Sales tax: 0.00"],
+    "total": [1297.40, "Total USD: 1,297.40"],
+    "line_items": [
+      {"description": "Ridgeline 2P tent", "quantity": 4, "unit_price": 189.00, "amount": 756.00, "category": "goods", "category_detail": null, "evidence": "TNT-2P Ridgeline 2P tent 4 189.00 756.00"},
+      {"description": "Down sleeping bag, 15F", "quantity": 4, "unit_price": 145.00, "amount": 580.00, "category": "goods", "category_detail": null, "evidence": "SLP-15 Down sleeping bag, 15F 4 145.00 580.00"},
+      {"description": "Freight (LTL)", "quantity": null, "unit_price": null, "amount": 95.00, "category": "shipping", "category_detail": null, "evidence": "Freight (LTL) 95.00"},
+      {"description": "Wholesale discount 10%", "quantity": null, "unit_price": null, "amount": -133.60, "category": "discount", "category_detail": null, "evidence": "Wholesale discount 10% -133.60"}
+    ]
+  },
+  "inv_011_proforma": {
+    "mock_fault": null,
+    "low_confidence": [],
+    "document_type": "proforma", "document_type_detail": null,
+    "vendor_name": ["Orchid Textile Mills", "Orchid Textile Mills"],
+    "invoice_number": ["OTM-PF-0456", "Proforma No.: OTM-PF-0456"],
+    "invoice_date": ["2026-03-12", "Date: 2026-03-12"],
+    "due_date": [null, null],
+    "purchase_order": ["LX-20260312", "Buyer PO: LX-20260312"],
+    "currency": ["USD", "Total (USD, FOB Chennai): 11,560.00"],
+    "subtotal": [null, null],
+    "tax": [null, null],
+    "total": [11560.00, "Total (USD, FOB Chennai): 11,560.00"],
+    "line_items": [
+      {"description": "Cotton poplin, 140cm, white", "quantity": 2000, "unit_price": 3.15, "amount": 6300.00, "category": "goods", "category_detail": null, "evidence": "Cotton poplin, 140cm, white 2,000 m x 3.15 = 6,300.00"},
+      {"description": "Cotton twill, 150cm, navy", "quantity": 1200, "unit_price": 4.20, "amount": 5040.00, "category": "goods", "category_detail": null, "evidence": "Cotton twill, 150cm, navy 1,200 m x 4.20 = 5,040.00"},
+      {"description": "Export packing", "quantity": null, "unit_price": null, "amount": 220.00, "category": "fee", "category_detail": null, "evidence": "Export packing = 220.00"}
+    ]
+  },
+  "inv_012_email_body": {
+    "mock_fault": null,
+    "low_confidence": ["currency"],
+    "document_type": "invoice", "document_type_detail": null,
+    "vendor_name": ["Whitcombe Consulting", "From: Whitcombe Consulting"],
+    "invoice_number": ["WC-0042", "Invoice number: WC-0042"],
+    "invoice_date": ["2026-03-01", "Invoice date: 2026-03-01"],
+    "due_date": ["2026-03-15", "Please pay by 2026-03-15."],
+    "purchase_order": [null, null],
+    "currency": ["USD", "so that's $450.00 in total"],
+    "subtotal": [null, null],
+    "tax": [null, null],
+    "total": [450.00, "so that's $450.00 in total"],
+    "line_items": [
+      {"description": "Data migration review", "quantity": 3, "unit_price": 150.00, "amount": 450.00, "category": "services", "category_detail": null, "evidence": "3 hours on the data migration review at our usual rate of $150/hr, so that's $450.00 in total."}
+    ]
+  }
+}
