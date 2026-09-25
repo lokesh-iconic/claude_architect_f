@@ -32,4 +32,5 @@ testpaths = [
     "2_tool_design_and_MCP_integration/tests",
     "3_claude_code_configuration_and_workflows/tests",
     "4_prompt_engineering_and_structured_output/tests",
+    "5_context_management_and_reliability/tests",
 ]

@@ -9,6 +9,7 @@ builds, how to run it, and how to verify it.
 | [2_tool_design_and_MCP_integration/](2_tool_design_and_MCP_integration/) | An issue-tracker MCP server: overlapping-tool disambiguation, structured errors, resources, project/user scopes |
 | [3_claude_code_configuration_and_workflows/](3_claude_code_configuration_and_workflows/) | Team Claude Code configuration (CLAUDE.md hierarchy, path-scoped rules, a slash command, a forked Skill) and a CI review pipeline with cross-run comment dedup |
 | [4_prompt_engineering_and_structured_output/](4_prompt_engineering_and_structured_output/) | A structured invoice-extraction pipeline: strict tool schema with nullable fields, few-shot prompting, validation-retry with error feedback, Message Batches with failed-only resubmission, confidence-based review routing |
+| [5_context_management_and_reliability/](5_context_management_and_reliability/) | A long-conversation customer-support agent over MCP tools: a persistent case-facts block kept apart from the summarized history, trimmed tool outputs, a programmatic refund prerequisite, escalation criteria with a backstop, structured timeout errors with partial results |
 
 ## Setup
 
